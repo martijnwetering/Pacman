@@ -22,17 +22,9 @@ import android.util.Log;
 import android.util.TypedValue;
 
 
-public class PackmanApplication extends GameEngine {
-	
-	/**
-	 * MoveableGmeObject vis, player in the game
-	 */
-//	private Vis vis;
-//	
-//	/**
-//	 * Dashboard for displaying the score
-//	 */
-//	private DashboardTextView scoreDisplay;
+public class PackmanApplication extends GameEngine 
+{
+	private Pacman pacman;
 	
 	/**
 	 * Initialize the game, create objects and level
@@ -48,7 +40,10 @@ public class PackmanApplication extends GameEngine {
 		MotionSensor.use = false;
 		OnScreenButtons.use = true;
 
-		createTileEnvironment();
+		//createTileEnvironment();
+		
+		pacman = new Pacman(this);
+		addGameObject(pacman, 100, 240);
 
 //		vis = new Vis(this);
 //		addGameObject(vis, 120, 240);
