@@ -11,9 +11,12 @@ import android.gameengine.icadroids.objects.collisions.TileCollision;
 public class Pacman extends MoveableGameObject implements ICollision
 {
 	private PackmanApplication app;
+	private int speed;
 	
-	public Pacman(PackmanApplication app) {
+	public Pacman(PackmanApplication app, int speed) {
 		this.app = app;
+		this.speed = speed;
+		
 		setSprite("pacman");
 		setDirection(90);
 	}
@@ -32,25 +35,25 @@ public class Pacman extends MoveableGameObject implements ICollision
 
 		if (OnScreenButtons.dPadUp || (MotionSensor.tiltUp && !buttonPressed))
 		{
-			setDirectionSpeed(0, 8);
+			setDirectionSpeed(0, speed);
 			setFrameNumber(0);
 		}
 		if (OnScreenButtons.dPadDown
 				|| (MotionSensor.tiltDown && !buttonPressed))
 		{
-			setDirectionSpeed(180, 8);
+			setDirectionSpeed(180, speed);
 			setFrameNumber(0);
 		}
 		if (OnScreenButtons.dPadRight
 				|| (MotionSensor.tiltRight && !buttonPressed))
 		{
-			setDirectionSpeed(90, 8);
+			setDirectionSpeed(90, speed);
 			setFrameNumber(0);
 		}
 		if (OnScreenButtons.dPadLeft
 				|| (MotionSensor.tiltLeft && !buttonPressed))
 		{
-			setDirectionSpeed(270, 8);
+			setDirectionSpeed(270, speed);
 			setFrameNumber(0);
 		}
 	}
@@ -64,6 +67,13 @@ public class Pacman extends MoveableGameObject implements ICollision
 				moveUpToTileSide(tc);
 				setSpeed(0);
 				return; // might be considered ugly by some colleagues...
+			}
+			
+			if (tc.theTile.getTileType() == 0)
+			{
+				moveUpToTileSide(tc);
+				setSpeed(0);
+				return;
 			}
 		}
 		
