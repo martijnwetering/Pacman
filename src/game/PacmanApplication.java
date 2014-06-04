@@ -26,7 +26,7 @@ public class PacmanApplication extends GameEngine
 
 		createTileEnvironment();
 		
-		pacman = new Pacman(this, 4);
+		pacman = new Pacman(this, 2);
 		addGameObject(pacman, 100, 240);
 		
 		PointController pointController = new PointController(this);
