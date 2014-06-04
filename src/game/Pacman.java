@@ -16,7 +16,7 @@ import android.gameengine.icadroids.objects.collisions.TileCollision;
 public class Pacman extends Creature implements ICollision
 {
 	private PacmanApplication app;
-	private int speed, currentDirection, previousDirection;
+	private int speed, currentDirection, previousDirection, score;
 	
 	public Pacman(PacmanApplication app, int speed) {
 		this.app = app;
@@ -25,6 +25,8 @@ public class Pacman extends Creature implements ICollision
 		setSprite("pacman");
 		setDirection(90);
 		currentDirection = 90;
+		
+		score = 0;
 	}
 	
 	@Override
@@ -39,8 +41,7 @@ public class Pacman extends Creature implements ICollision
 			{
 				if (gameObject instanceof NormalPoint)
 				{
-					//score = score + ((Strawberry) g).getPoints();
-					// Log.d("hapje!!!", "score is nu " + score);
+					score = score + ((NormalPoint) gameObject).getPoints();
 					app.deleteGameObject(gameObject);
 				} 
 			}
@@ -103,6 +104,11 @@ public class Pacman extends Creature implements ICollision
 				return; 
 			}
 		}
+	}
+	
+	public int getScore()
+	{
+		return score;
 	}
 	
 	
