@@ -4,7 +4,10 @@ import java.util.Random;
 
 import android.gameengine.icadroids.alarms.Alarm;
 import android.gameengine.icadroids.alarms.IAlarm;
+import android.gameengine.icadroids.objects.GameObject;
 import android.gameengine.icadroids.tiles.Tile;
+import android.graphics.Rect;
+import java.util.Vector;
 import android.util.Log;
 
 public class PointController implements IAlarm
@@ -70,6 +73,17 @@ public class PointController implements IAlarm
 				
 		if(checkIfPosIsWall(x, y) == false)
 		{
+			// Checks if there is already a normal point on the specified
+			// coordinates. If there is one, it will be removed.
+			Rect rectangle = new Rect(x, y, x + 20, y + 20);
+			Vector<GameObject> gameObjectList = app.findItemAt(rectangle);
+			if (gameObjectList.size() != 0)
+			{
+				GameObject gameObject = gameObjectList.firstElement();
+				app.deleteGameObject(gameObject);
+			}
+			// Adds the gameObject to the world if the underlaying tile is a
+			// background tile.
 			app.addGameObject(specialPoint, x, y);
 		}
 		else
