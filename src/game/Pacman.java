@@ -44,6 +44,11 @@ public class Pacman extends Creature implements ICollision
 					score = score + ((NormalPoint) gameObject).getPoints();
 					app.deleteGameObject(gameObject);
 				} 
+				if (gameObject instanceof SpecialPoint)
+				{
+					score = score + ((SpecialPoint) gameObject).getPoints();
+					app.deleteGameObject(gameObject);
+				}
 			}
 		}
 		
@@ -96,7 +101,7 @@ public class Pacman extends Creature implements ICollision
 		super.collisionOccurred(collidedTiles);
 		for (TileCollision tc : collidedTiles)
 		{
-			if (tc.theTile.getTileType() == 1)
+			if (tc.theTile.getTileType() != 11)
 			{
 				undoMove();
 				currentDirection = previousDirection;
