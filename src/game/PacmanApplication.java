@@ -16,6 +16,8 @@ public class PacmanApplication extends GameEngine
 	private Pacman pacman;
 	private DashboardTextView scoreDisplay;
 	private GameTiles gameTiles;
+	private int level = 1;
+
 	
 	@Override
 	protected void initialize() {
@@ -25,11 +27,11 @@ public class PacmanApplication extends GameEngine
 		MotionSensor.use = false;
 		OnScreenButtons.use = true;
 
-
 		createTileEnvironment();
 		
 		pacman = new Pacman(this, 4);
 		addGameObject(pacman, 100, 260);
+
 		
 		PointController pointController = new PointController(this);
 		pointController.placeNormalPoints();
@@ -49,6 +51,7 @@ public class PacmanApplication extends GameEngine
 		this.scoreDisplay.setWidgetBackgroundColor(Color.WHITE);
 		this.scoreDisplay.setWidgetX(590);
 		this.scoreDisplay.setWidgetY(5);
+
 		// If you want to modify the layout of a dashboard widget,
 		// you need to so so using its run method.
 		this.scoreDisplay.run(new Runnable() {
