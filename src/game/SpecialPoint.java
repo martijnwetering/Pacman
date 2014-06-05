@@ -4,7 +4,7 @@ public class SpecialPoint extends BasePoint {
 
 	public SpecialPoint(PacmanApplication app) 
 	{
-		super(app, 75);
+		super(app, 25);
 		setSprite("special_point");
 	}
 

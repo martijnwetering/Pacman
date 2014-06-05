@@ -12,12 +12,32 @@ import android.gameengine.icadroids.objects.GameObject;
 import android.gameengine.icadroids.objects.MoveableGameObject;
 import android.gameengine.icadroids.objects.collisions.ICollision;
 import android.gameengine.icadroids.objects.collisions.TileCollision;
+import android.util.Log;
+
 
 public class Pacman extends Creature implements ICollision
 {
 	private PacmanApplication app;
 	private int speed, currentDirection, previousDirection, score, count, i;
-	double currentX, currentY;
+	private double currentX, currentY;
+	
+	public enum Direction
+	{
+		UP(0), RIGHT(90), DOWN(180), LEFT(270);
+		
+		private final int value;
+		
+		private Direction(int value) 
+		{
+            this.value = value;
+		}
+		
+		public int getValue()
+		{
+			return value;
+		}
+	}
+	
 	 
 	public Pacman(PacmanApplication app, int speed) {
 		this.app = app;
@@ -28,25 +48,16 @@ public class Pacman extends Creature implements ICollision
 		setSprite("pacman_right_strip4", 4);
 		setDirection(90);
 		currentDirection = 90;
-		score = 0;
-		count = 0;
-		i = 0;
+		score = -10;
 	}
 	
 	@Override
 	public void update()
 	{
 		super.update();
-		count++;
-		if(count == 5){
-			i++;
-			count = 0;
-			if(i == 3){
-				i = 0;
-			}
-		}
+				
+		animatePacman();
 
-		
 		ArrayList<GameObject> collided = getCollidedObjects();
 		if (collided != null)
 		{
@@ -57,6 +68,11 @@ public class Pacman extends Creature implements ICollision
 					score = score + ((NormalPoint) gameObject).getPoints();
 					app.deleteGameObject(gameObject);
 				} 
+				if (gameObject instanceof SpecialPoint)
+				{
+					score = score + ((SpecialPoint) gameObject).getPoints();
+					app.deleteGameObject(gameObject);
+				}
 			}
 		}
 		
@@ -69,40 +85,61 @@ public class Pacman extends Creature implements ICollision
 
 		if (OnScreenButtons.dPadUp || (MotionSensor.tiltUp && !buttonPressed))
 		{
-			setSprite("pacman_up_strip4", 4);
 			previousDirection = currentDirection;
-			currentDirection = 0;
-			setDirectionSpeed(0, speed);
-			setFrameNumber(i);
+			currentDirection = Direction.UP.getValue();
+			setDirectionSpeed(Direction.UP.getValue(), speed);
 		}
 		if (OnScreenButtons.dPadDown
 				|| (MotionSensor.tiltDown && !buttonPressed))
 		{
-			setSprite("pacman_down_strip4", 4);
 			previousDirection = currentDirection;			
-			currentDirection = 180;
-			setDirectionSpeed(180, speed);
-			setFrameNumber(i);
+			currentDirection = Direction.DOWN.getValue();
+			setDirectionSpeed(Direction.DOWN.getValue(), speed);
 		}
 		if (OnScreenButtons.dPadRight
 				|| (MotionSensor.tiltRight && !buttonPressed))
 		{
-			setSprite("orange_strip3", 3);
 			previousDirection = currentDirection;		
-			currentDirection = 90;
-			setDirectionSpeed(90, speed);						
-			setFrameNumber(i);
+			currentDirection = Direction.RIGHT.getValue();
+			setDirectionSpeed(Direction.RIGHT.getValue(), speed);						
 			
 		}
 		if (OnScreenButtons.dPadLeft
 				|| (MotionSensor.tiltLeft && !buttonPressed))
 		{
-			setSprite("pacman_left_strip4", 4);
 			previousDirection = currentDirection;			
-			currentDirection = 270;
-			setDirectionSpeed(270, speed);
-			setFrameNumber(i);
+			currentDirection = Direction.LEFT.getValue();
+			setDirectionSpeed(Direction.LEFT.getValue(), speed);
 		}
+	}
+	
+	int counter = 0;
+	private void animatePacman()
+	{
+		if (counter == 4) counter = 0;
+				
+		if (currentDirection == Direction.UP.getValue())
+		{
+			setSprite("pacman_up_strip4", 4);
+			setFrameNumber(counter);
+		}
+		else if (currentDirection == Direction.RIGHT.getValue())
+		{
+			setSprite("pacman_right_strip4", 4);
+			setFrameNumber(counter);
+		}
+		else if (currentDirection == Direction.DOWN.getValue())
+		{
+			setSprite("pacman_down_strip4", 4);
+			setFrameNumber(counter);
+		}
+		else if (currentDirection == Direction.LEFT.getValue())
+		{
+			setSprite("pacman_left_strip4", 4);
+			setFrameNumber(counter);
+		}
+		
+		counter++;
 	}
 	
 	@Override
@@ -111,7 +148,7 @@ public class Pacman extends Creature implements ICollision
 		super.collisionOccurred(collidedTiles);
 		for (TileCollision tc : collidedTiles)
 		{
-			if (tc.theTile.getTileType() == 1)
+			if (tc.theTile.getTileType() != 11)
 			{
 				undoMove();
 				currentDirection = previousDirection;
