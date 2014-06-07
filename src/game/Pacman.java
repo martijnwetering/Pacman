@@ -18,7 +18,7 @@ import android.util.Log;
 public class Pacman extends Creature implements ICollision
 {
 	private PacmanApplication app;
-	private int speed, currentDirection, previousDirection, score, count, i;
+	private int speed, currentDirection, previousDirection, score, dotsEaten;
 	private double currentX, currentY;
 	
 	public enum Direction
@@ -48,6 +48,7 @@ public class Pacman extends Creature implements ICollision
 		setSprite("pacman_right_strip4", 4);
 		setDirection(90);
 		currentDirection = 90;
+		dotsEaten = 0;
 		score = -10;
 	}
 	
@@ -67,6 +68,7 @@ public class Pacman extends Creature implements ICollision
 				{
 					score = score + ((NormalPoint) gameObject).getPoints();
 					app.deleteGameObject(gameObject);
+					dotsEaten++;
 				} 
 				if (gameObject instanceof SpecialPoint)
 				{
@@ -161,6 +163,11 @@ public class Pacman extends Creature implements ICollision
 	public int getScore()
 	{
 		return score;
+	}
+	
+	public int getDotsEaten()
+	{
+		return dotsEaten;
 	}
 	
 	
