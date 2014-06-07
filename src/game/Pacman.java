@@ -19,7 +19,8 @@ public class Pacman extends Creature implements ICollision
 {
 	private PacmanApplication app;
 	private int speed, currentDirection, previousDirection, score, count, i;
-	private double currentX, currentY;
+	//zorgt ervoor of pacman jager is of slachtoffer
+    private boolean hunter;
 	
 	public enum Direction
 	{
@@ -42,13 +43,13 @@ public class Pacman extends Creature implements ICollision
 	public Pacman(PacmanApplication app, int speed) {
 		this.app = app;
 		this.speed = speed;
-		this.currentX = getPrevCenterX();
-		this.currentY = getPrevCenterY();
+		
 		
 		setSprite("pacman_right_strip4", 4);
 		setDirection(90);
 		currentDirection = 90;
 		score = -10;
+		hunter = false;
 	}
 	
 	@Override
@@ -71,6 +72,11 @@ public class Pacman extends Creature implements ICollision
 				if (gameObject instanceof SpecialPoint)
 				{
 					score = score + ((SpecialPoint) gameObject).getPoints();
+					app.deleteGameObject(gameObject);
+				}
+				if (gameObject instanceof PowerUp)
+				{
+					score = score + ((PowerUp) gameObject).getPoints();
 					app.deleteGameObject(gameObject);
 				}
 			}
@@ -149,12 +155,23 @@ public class Pacman extends Creature implements ICollision
 		for (TileCollision tc : collidedTiles)
 		{
 			if (tc.theTile.getTileType() != 11)
-			{
+			{ 
+				if (tc.theTile.getTileType() != 13)
+				{
 				undoMove();
 				currentDirection = previousDirection;
 				setDirectionSpeed(previousDirection, speed);
-				return; 
+				return;
+				}
+				else 
+				{
+					undoMove();
+					currentDirection = previousDirection;
+					setDirectionSpeed(previousDirection, speed);
+					return;	
+				}
 			}
+			
 		}
 	}
 	

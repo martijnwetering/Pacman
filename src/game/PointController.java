@@ -92,6 +92,34 @@ public class PointController implements IAlarm
 		}
 	}
 	
+	
+	public void placePowerUps() 
+	{
+		for (int i = 0; i < tiles.length; i++ )
+		{
+			for (int j = 0; j < tiles[i].length; j++)
+			{
+				if (tiles[i][j] != null)
+				{
+					Tile tile = tiles[i][j];
+					int xCor = tile.getTileX();
+					int yCor = tile.getTileY();
+					int tileType = tile.getTileType();
+					
+					Log.d("tileType", Integer.toString(tileType));
+				
+				    
+					if (tileType == 13)
+					{
+						Log.d("PowerUps", "placing powerUps");
+						PowerUp powerUp = new PowerUp(app);
+						app.addGameObject(powerUp, xCor, yCor);				
+					}
+				}
+			}
+		}
+	}
+	
 	/**
 	 * Checks if the given x and y coordinates are already occupied
 	 * by a wall tile.
@@ -114,11 +142,13 @@ public class PointController implements IAlarm
 					int tileType = tile.getTileType();
 					
 					if (tileType != 11)
-					{
+					{ 
+					  
 						if (xCor == tileX && yCor == tileY)
 						{
 							return true;
 						}
+					  
 					}
 				}
 			}
