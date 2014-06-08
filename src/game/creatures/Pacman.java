@@ -45,7 +45,7 @@ public class Pacman extends Creature implements ICollision, IAlarm
 		setDirection(90);
 		currentDirection = 90;
 		dotsEaten = 0;
-		score = -10;
+		score = 0;
 		playerAction = false;
 		lives = 3;
 		hunter = false;
@@ -86,8 +86,6 @@ public class Pacman extends Creature implements ICollision, IAlarm
 					{
 						Enemy enemy = (Enemy)gameObject;
 						score = score + enemy.getPoints();
-						enemy.jumpToStartPosition();
-						enemy.setDirection(Direction.UP.getValue());
 					}
 					else if (lives > 0 && !app.getIsResetting())
 					{

@@ -96,6 +96,11 @@ public abstract class Enemy extends Creature
 						}
 					}
 				}
+				if (gameObject instanceof Pacman && pacman.isHunter())
+				{
+					jumpToStartPosition();
+					setDirection(Direction.UP.getValue());
+				}
 			}
 		}
 	}
