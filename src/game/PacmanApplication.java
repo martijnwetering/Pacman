@@ -3,6 +3,7 @@ package game;
 
 import java.util.Vector;
 
+import android.gameengine.icadroids.dashboard.DashboardImageView;
 import android.gameengine.icadroids.dashboard.DashboardTextView;
 import android.gameengine.icadroids.engine.GameEngine;
 import android.gameengine.icadroids.input.MotionSensor;
@@ -20,11 +21,15 @@ public class PacmanApplication extends GameEngine
 {
 	private Pacman pacman;
 	private DashboardTextView scoreDisplay;
+	private DashboardTextView Display;
+	private DashboardImageView DisplayImage; 
 	private GameTiles gameTiles;
 	private PointController pointController;
 	private LevelGenerator generator;
 	private int[][] tileMap;
 	private int level;
+	private boolean start = false;
+	
 	 
 
 
@@ -34,18 +39,29 @@ public class PacmanApplication extends GameEngine
 
 		TouchInput.use = false;
 		MotionSensor.use = false;
-		OnScreenButtons.use = true;
+		OnScreenButtons.use = false;
 		
 		level = 1;
 		generator = new LevelGenerator();
+		
+		
 		
 		createTileEnvironment();
 		
 		addPacman(120, 260);
 		
+		
 		pointController = new PointController(this);
 		pointController.placeNormalPoints();
 		pointController.placePowerUps();
+		
+		DisplayImage = new DashboardImageView(this, "TheGame");
+		
+		
+		//Display = new DashboardTextView(this);		
+		
+		addToDashboard(DisplayImage);
+		//addToDashboard(Display);
 		
 		
 		scoreDisplay = new DashboardTextView(this);
@@ -53,13 +69,35 @@ public class PacmanApplication extends GameEngine
 		scoreDisplay.setTextColor(Color.BLACK);
 		addToDashboard(scoreDisplay);
 
-		createDashboard();		
+		createDashboard();
+	
 	}
 	
 	private void createDashboard() 
 	{
-
+		if(!start){/*
+		this.Display.setPadding(140, 10, 10, 10);
+		this.Display.setWidgetHeight(800);
+		this.Display.setWidgetWidth(1200);
+		this.Display.setWidgetBackgroundColor(Color.BLACK);
+		this.Display.setTextColor(Color.WHITE);
+		this.Display.setWidgetX(0);
+		this.Display.setWidgetY(0);
+		this.Display.setTextSize(40);
+		this.Display.setTextScaleX(5);
+		this.Display.setTextString("PacMan");
+		//this.setResourceName(String resourceName)
+		*/
+		//this.DisplayImage.setWidgetX(400);
+		//this.DisplayImage.setWidgetY(200);
+		this.DisplayImage.setWidgetWidth(1240);
+		this.DisplayImage.setWidgetHeight(600);
+		//this.DisplayImage.setBackgroundColor(Color.WHITE);
+		
+		}
+		if(start){
 		// this.scoreDisplay.setWidgetWidth(20);
+	    OnScreenButtons.use = false;
 		this.scoreDisplay.setWidgetHeight(60);
 		this.scoreDisplay.setWidgetBackgroundColor(Color.WHITE);
 		this.scoreDisplay.setWidgetX(590);
@@ -72,6 +110,7 @@ public class PacmanApplication extends GameEngine
 				scoreDisplay.setPadding(10, 10, 10, 10);
 			}
 		});
+		}
 	}
 	
 	private void addPacman(int x, int y)
