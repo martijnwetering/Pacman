@@ -1,7 +1,13 @@
 package game;
 
+import game.Creature.Direction;
+
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Vector;
 
+import android.gameengine.icadroids.alarms.Alarm;
+import android.gameengine.icadroids.alarms.IAlarm;
 import android.gameengine.icadroids.dashboard.DashboardTextView;
 import android.gameengine.icadroids.engine.GameEngine;
 import android.gameengine.icadroids.input.MotionSensor;
@@ -15,14 +21,18 @@ import android.util.Log;
 import android.util.TypedValue;
 
 
-public class PacmanApplication extends GameEngine 
+public class PacmanApplication extends GameEngine implements IAlarm
 {
 	private Pacman pacman;
 	private DashboardTextView scoreDisplay;
+	private DashboardTextView livesDisplay;
 	private GameTiles gameTiles;
-	PointController pointController;
+	private PointController pointController;
 	private int level = 1;
-
+	private Enemy redEnemy, orangeEnemy, greenEnemy, blueEnemy;
+	private Alarm alarm;
+	protected boolean resetting;
+	private ArrayList<NormalPoint> normalPoints; 
 	
 	@Override
 	protected void initialize() {
@@ -34,7 +44,21 @@ public class PacmanApplication extends GameEngine
 
 		createTileEnvironment();
 		
+		normalPoints = new ArrayList<NormalPoint>();
+		
 		addPacman(100, 260);
+		
+		redEnemy = new RedEnemy(pacman, 280, 260);
+		addGameObject(redEnemy, redEnemy.getXcor(), redEnemy.getYcor());
+		
+		orangeEnemy = new OrangeEnemy(pacman, 300, 260);
+		addGameObject(orangeEnemy, orangeEnemy.getXcor(), orangeEnemy.getYcor());
+		
+		greenEnemy = new GreenEnemy(pacman, 280, 280);
+		addGameObject(greenEnemy, greenEnemy.getXcor(), greenEnemy.getYcor());
+		
+		blueEnemy = new BlueEnemy(pacman, 300, 280);
+		addGameObject(blueEnemy, blueEnemy.getXcor(), blueEnemy.getYcor());
 		
 		pointController = new PointController(this);
 		pointController.placeNormalPoints();
@@ -43,102 +67,84 @@ public class PacmanApplication extends GameEngine
 		scoreDisplay.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 24);
 		scoreDisplay.setTextColor(Color.BLACK);
 		addToDashboard(scoreDisplay);
-
-		createDashboard();		
+		
+		createDashboard(scoreDisplay, 590, 5);
+		
+		resetting = false;
+		
 	}
 	
-	private void createDashboard() 
+	private void createDashboard(final DashboardTextView textView, int xCor, int yCor) 
 	{
 
 		// this.scoreDisplay.setWidgetWidth(20);
-		this.scoreDisplay.setWidgetHeight(60);
-		this.scoreDisplay.setWidgetBackgroundColor(Color.WHITE);
-		this.scoreDisplay.setWidgetX(590);
-		this.scoreDisplay.setWidgetY(5);
+		textView.setWidgetHeight(60);
+		textView.setWidgetBackgroundColor(Color.WHITE);
+		textView.setWidgetX(xCor);
+		textView.setWidgetY(yCor);
 
 		// If you want to modify the layout of a dashboard widget,
 		// you need to so so using its run method.
-		this.scoreDisplay.run(new Runnable() {
+		textView.run(new Runnable() {
 			public void run() {
-				scoreDisplay.setPadding(10, 10, 10, 10);
+				textView.setPadding(10, 10, 10, 10);
 			}
 		});
 	}
 	
 	private void addPacman(int x, int y)
 	{
-		pacman = new Pacman(this, 4);
-		addGameObject(pacman, x, y);
+		pacman = new Pacman(this, 4, x, y);
+		addGameObject(pacman, pacman.getXCor(), pacman.getYCor());
 	}
 	
-	
-
-
 	/**
 	 * Create background with tiles
 	 */
 	private void createTileEnvironment() 
 	{
-		String[] tileImagesNames = { "cornertopleft", "cornertopright", "cornerbottomleft", "cornerbottomright", "vertical", "horizontal", "internleft", "internright", "interntop", "internbottom", "wall_tile", "background_tile", "no_gameobject", "fruit_tile" };
+		String[] tileImagesNames = { "cornertopleft", "cornertopright", "cornerbottomleft", 
+				"cornerbottomright", "vertical", "horizontal", "internleft", 
+				"internright", "interntop", "internbottom", "wall_tile", 
+				"background_tile", "no_gameobject", "gate", "invisible_wall" };
+		int[][] tilemap;
 		// layout: better not let the Eclipse formatter get at this...
 		if(level == 1){
-		int[][] testMap = {
-				{  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0 },
-				{  0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,  1, 2,  1,  1,  1,  1, 2, 2, 2, 2, 2, 2, 2, 2,  1, 2, 2, 2,  0 },
-				{  0, 2,  1,  1, 2,  1,  1,  1, 2,  1, 2,  1, 2, 2, 2, 2,  1, 2, 2, 2, 2, 2, 2, 2, 2,  1, 2, 2, 2,  0 },
-				{  0, 2,  1,  1, 2,  1,  1,  1, 2,  1, 2,  1,  1, 2,  1, 2,  1, 2, 2, 2, 2, 2, 2, 2, 2,  1, 2, 2, 2,  0 },
-				{  0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,  1, 2,  1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,  0 },
-				{  0, 2,  1,  1, 2,  1, 2,  1,  1,  1,  1,  1,  1, 2,  1, 2,  1, 2, 2, 2, 2, 2, 2, 2, 2,  1, 2, 2, 2,  0 },
-				{  0, 2, 2, 2, 2,  1, 2,  1,  1,  1,  1,  1,  1, 2,  1, 2,  1, 2, 2, 2, 2, 2, 2, 2, 2,  1, 2, 2, 2,  0 },
-				{  0,  1,  1,  1, 2,  1, 2, 2, 2, 2, 2, 2, 2, 2,  1, 2,  1, 2, 2, 2, 2, 2, 2, 2, 2,  1, 2, 2, 2,  0 },
-				{  0, 2, 2,  1, 2,  1,  1,  1, 2,  1,  1,  1,  1, 2,  1, 2,  1, 2, 2, 2, 2, 2, 2, 2, 2,  1, 2, 2, 2,  0 },
-				{  0, 2, 2,  1, 2,  1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,  1,  1, 2,  1, 2,  1, 2, 2, 2, 2, 2, 2, 2,  0 },
-				{  0,  1,  1,  1, 2,  1, 2,  1,  1,  1,  1, 2, 2,  1,  1,  1,  1, 2,  1, 2,  1, 2, 2, 2, 2, 2, 2, 2, 2,  0 },
-				{  0, 2, 2, 2, 2,  1, 2,  1,  1, 2, 2, 2, 2, 2, 2,  1,  1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,  0 },
-				{  0,  1,  1,  1, 2, 2, 2,  1,  1, 2, 2, 2, 2, 2, 2,  1,  1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,  0 },
-				{  0, 2, 2,  1, 2,  1, 2,  1,  1, 2, 2, 2, 2, 2, 2,  1,  1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,  0 },
-				{  0, 2, 2,  1, 2,  1, 2,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,  0 },
-				{  0,  1,  1,  1, 2,  1, 2,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1, 2, 2, 2, 2,  1,  1,  1,  1,  1,  1,  1,  1,  0 },
-				{  0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,  1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,  0 },
-				{  0,  1,  1,  1, 2,  1,  1,  1, 2,  1,  1,  1, 2,  1,  1,  1,  1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,  0 },
-				{  0, 2, 2,  1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,  1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,  0 },
-				{  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0 },
-		};
-		int[][] tilemap = {
+		tilemap = new int[][] {
 				{10,10,10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,10, 10 },
 				{10, 0, 5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5, 1, 10 },
 				{10, 4,11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11,  4, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 4, 10 },
 				{10, 4,11,  0,  5,  5,  1, 11,  0,  5,  5,  5,  1, 11,  4, 11,  0,  5,  5,  5,  1, 11,  0,  5,  5,  1, 12, 4, 10 },
 				{10, 4,11,  4, 12, 12,  4, 11,  4, 12, 12, 12,  4, 11,  4, 11,  4, 12, 12, 12,  4, 11,  4, 12, 12,  4, 12, 4, 10 }, 
-				{10, 4,11,  2,  5,  5,  3, 11,  2,  5,  5,  5,  3, 11,  9, 11,  2,  5,  5,  5,  3, 11,  2,  5,  5,  3, 12, 4, 10 },
-				{10, 4,11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 4, 10 },
-				{10, 4,11,  6,  5,  5,  7, 11,  8, 11,  6,  5,  5,  5,  5,  5,  5,  5,  7, 11,  8, 11,  6,  5,  5,  7, 11, 4, 10 },
+				{10, 4,11,  2,  5,  5,  3, 14,  2,  5,  5,  5,  3, 14,  9, 14,  2,  5,  5,  5,  3, 14,  2,  5,  5,  3, 12, 4, 10 },
+				{10, 4,11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 14, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 4, 10 },
+				{10, 4,14,  6,  5,  5,  7, 14,  8, 11,  6,  5,  5,  5,  5,  5,  5,  5,  7, 11,  8, 14,  6,  5,  5,  7, 14, 4, 10 },
 				{10, 4,11, 11, 11, 11, 11, 11,  4, 11, 11, 11, 11, 11,  4, 11, 11, 11, 11, 11,  4, 11, 11, 11, 11, 11, 11, 4, 10 },
 				{10, 2, 5,  5,  5,  5,  1, 11,  4,  5,  5,  5,  7, 11,  4, 11,  6,  5,  5,  5,  4, 11,  0,  5,  5,  5,  5, 3, 10 },
-				{10,12,12, 12, 12, 12,  4, 11,  4, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11,  4, 11,  4, 12, 12, 12, 12,12, 10 },
-				{10,12,12, 12, 12, 12,  4, 11,  4, 11,  0,  5,  5,  5,  5,  5,  5,  5,  1, 11,  4, 11,  4, 12, 12, 12, 12,12, 10 },
-				{10, 5, 5,  5,  5,  5,  3, 11,  9, 11,  4, 12, 12, 12, 12, 12, 12, 12,  4, 11,  9, 11,  2,  5,  5,  5,  5, 5, 10 },
-				{10,11,11, 11, 11, 11, 11, 11, 11, 11,  4, 12, 12, 12, 12, 12, 12, 12,  4, 11, 11, 11, 11, 11, 11, 11, 11,11, 10 },
-				{10, 5, 5,  5,  5,  5,  1, 11,  8, 11,  4, 12, 12, 12, 12, 12, 12, 12,  4, 11,  8, 11,  0,  5,  5,  5,  5, 5, 10 },
+				{10,12,12, 12, 12, 12,  4, 11,  4, 11, 11, 11, 11, 11, 14, 11, 11, 11, 11, 11,  4, 11,  4, 12, 12, 12, 12,12, 10 },
+				{10,12,12, 12, 12, 12,  4, 11,  4, 11,  0,  5,  5, 13, 13, 13,  5,  5,  1, 11,  4, 11,  4, 12, 12, 12, 12,12, 10 },
+				{10, 5, 5,  5,  5,  5,  3, 14,  9, 14,  4, 12, 12, 13, 13, 13, 12, 12,  4, 14,  9, 14,  2,  5,  5,  5,  5, 5, 10 },
+				{10,11,11, 11, 11, 11, 11, 11, 14, 11,  4, 12, 12, 12, 12, 12, 12, 12,  4, 11, 14, 11, 11, 11, 11, 11, 11,11, 10 },
+				{10, 5, 5,  5,  5,  5,  1, 14,  8, 14,  4, 12, 12, 12, 12, 12, 12, 12,  4, 14,  8, 14,  0,  5,  5,  5,  5, 5, 10 },
 				{10,12,12, 12, 12, 12,  4, 11,  4, 11,  2,  5,  5,  5,  5,  5,  5,  5,  3, 11,  4, 11,  4, 12, 12, 12, 12,12, 10 },
-				{10,12,12, 12, 12, 12,  4, 11,  4, 11, 13, 13, 13, 13, 13, 13, 13, 13, 13, 11,  4, 11,  4, 12, 12, 12, 12,12, 10 },
+				{10,12,12, 12, 12, 12,  4, 11,  4, 11, 12, 12, 12, 12, 12, 12, 12, 12, 12, 11,  4, 11,  4, 12, 12, 12, 12,12, 10 },
 				{10, 0, 5,  5,  5,  5,  3, 11,  9, 11,  6,  5,  5,  5,  5,  5,  5,  5,  7, 11,  9, 11,  2,  5,  5,  5,  5, 1, 10 },
-				{10, 4,11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11,  4, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 4, 10 },
+				{10, 4,11, 11, 11, 14, 11, 11, 14, 11, 14, 11, 11, 11,  4, 11, 11, 11, 14, 11, 14, 11, 14, 11, 11, 11, 11, 4, 10 },
 				{10, 4,11,  6,  5,  5,  1, 11,  6,  5,  5,  5,  7, 11,  9, 11,  6,  5,  5,  5,  7, 11,  0,  5,  5,  7, 11, 4, 10 },
-				{10, 4,11, 11, 11, 11,  4, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11,  4, 11, 11, 11, 11, 4, 10 },
-				{10, 4, 5,  5,  7, 11,  9, 11,  8, 11,  6,  5,  5,  5,  5,  5,  5,  5,  7, 11,  8, 11,  9, 11,  6,  5,  5, 4, 10 },
-				{10, 4,11, 11, 11, 11, 11, 11,  4, 11, 11, 11, 11, 11,  4, 11, 11, 11, 11, 11,  4, 11, 11, 11, 11, 11, 11, 4, 10 },
+				{10, 4,11, 11, 11, 11,  4, 11, 11, 11, 14, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11,  4, 11, 11, 11, 11, 4, 10 },
+				{10, 4, 5,  5,  7, 11,  9, 14,  8, 11,  6,  5,  5,  5,  5,  5,  5,  5,  7, 11,  8, 11,  9, 11,  6,  5,  5, 4, 10 },
+				{10, 4,11, 11, 11, 11, 11, 11,  4, 11, 11, 11, 11, 11,  4, 11, 11, 11, 11, 11,  4, 11, 14, 11, 14, 11, 11, 4, 10 },
 				{10, 4,11,  6,  5,  5,  5,  5,  5,  5,  5,  5,  7, 11,  9, 11,  6,  5,  5,  5,  5,  5,  5,  5,  5,  7, 11, 4, 10 },
-				{10, 4,11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 4, 10 },
+				{10, 4,11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 14, 11, 14, 11, 14, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 4, 10 },
 				{10, 2, 5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5, 3, 10 },
 				{10,10,10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,10, 10 },
 		};
-		GameTiles myTiles = new GameTiles(tileImagesNames, tilemap, 20);
-		setTileMap(myTiles);
+		gameTiles = new GameTiles(tileImagesNames, tilemap, 20);
+		setTileMap(gameTiles);
 		Log.d("pacman", "GameTiles created");
 		}
 		if(level == 2){
-			int[][] tilemap = {
+		tilemap = new int[][] {
 					{10,10,10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,10, 10 },
 					{10, 0, 5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5, 1, 10 },
 					{10, 4,-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,  4, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 4, 10 },
@@ -190,14 +196,79 @@ public class PacmanApplication extends GameEngine
 		{
 			endGame();
 		}
+		if (actualDotsEaten == 10)
+		{
+			pointController.placeSpecialPoint(1);
+		}
+		if (actualDotsEaten == 15)
+		{
+			pointController.placeSpecialPoint(2);
+		}
 		
-		this.scoreDisplay.setTextString(
-				"Score: " + String.valueOf(this.pacman.getScore()));
+		scoreDisplay.setTextString(
+				"Score: " + String.valueOf(pacman.getScore())
+				+ " | Lives: " + String.valueOf(pacman.getLives()));
+	}
+	
+	public void restart() 
+	{
+		for (GameObject gameObject : normalPoints)
+		{
+			this.deleteGameObject(gameObject);
+		}
+		deleteGameObject(pacman);
+		deleteGameObject(redEnemy);
+		deleteGameObject(blueEnemy);
+		deleteGameObject(greenEnemy);
+		deleteGameObject(orangeEnemy);
+		
+		this.initialize();
+		
+	}
+	
+	public void freezeMap()
+	{	
+		pacman.setSpeed(0);
+		redEnemy.setSpeed(0);
+		greenEnemy.setSpeed(0);
+		blueEnemy.setSpeed(0);
+		orangeEnemy.setSpeed(0);
+		
+		alarm = new Alarm(1, 30, this);
+		alarm.startAlarm();
+	}
+	
+	private void resetMap()
+	{
+		pacman.jumpToStartPosition();
+		pacman.setDirection(Direction.RIGHT.getValue());
+		redEnemy.jumpToStartPosition();
+		redEnemy.setDirectionSpeed(Direction.UP.getValue(), 4);
+		greenEnemy.jumpToStartPosition();
+		greenEnemy.setDirectionSpeed(Direction.UP.getValue(), 4);
+		blueEnemy.jumpToStartPosition();
+		blueEnemy.setDirectionSpeed(Direction.UP.getValue(), 4);
+		orangeEnemy.jumpToStartPosition();
+		orangeEnemy.setDirectionSpeed(Direction.UP.getValue(), 4);
+		
+		resetting = false;
+		
+		deleteAlarm(alarm);
 	}
 	
 	public GameTiles getGameTiles()
 	{
 		return gameTiles;
+	}
+
+	@Override
+	public void triggerAlarm(int alarmID) {
+		resetMap();
+	}
+	
+	public void setOnNormalPointList(NormalPoint point)
+	{
+		normalPoints.add(point);
 	}
 
 }
