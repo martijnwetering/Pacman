@@ -4,6 +4,7 @@ import game.Creature.Direction;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+
 import java.util.Vector;
 
 import android.gameengine.icadroids.alarms.Alarm;
@@ -20,7 +21,6 @@ import android.graphics.Rect;
 import android.util.Log;
 import android.util.TypedValue;
 
-
 public class PacmanApplication extends GameEngine implements IAlarm
 {
 	private Pacman pacman;
@@ -28,12 +28,17 @@ public class PacmanApplication extends GameEngine implements IAlarm
 	private DashboardTextView livesDisplay;
 	private GameTiles gameTiles;
 	private PointController pointController;
-	private int level = 1;
 	private Enemy redEnemy, orangeEnemy, greenEnemy, blueEnemy;
 	private Alarm alarm;
 	protected boolean resetting;
 	private ArrayList<NormalPoint> normalPoints; 
 	
+	private LevelGenerator generator;
+	private int[][] tileMap;
+	private int level;
+	 
+
+
 	@Override
 	protected void initialize() {
 		System.out.println("running pacman");
@@ -41,7 +46,10 @@ public class PacmanApplication extends GameEngine implements IAlarm
 		TouchInput.use = false;
 		MotionSensor.use = false;
 		OnScreenButtons.use = true;
-
+		
+		level = 1;
+		generator = new LevelGenerator();
+		
 		createTileEnvironment();
 		
 		normalPoints = new ArrayList<NormalPoint>();
@@ -62,6 +70,8 @@ public class PacmanApplication extends GameEngine implements IAlarm
 		
 		pointController = new PointController(this);
 		pointController.placeNormalPoints();
+		pointController.placePowerUps();
+		
 		
 		scoreDisplay = new DashboardTextView(this);
 		scoreDisplay.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 24);
@@ -103,82 +113,15 @@ public class PacmanApplication extends GameEngine implements IAlarm
 	 */
 	private void createTileEnvironment() 
 	{
-		String[] tileImagesNames = { "cornertopleft", "cornertopright", "cornerbottomleft", 
-				"cornerbottomright", "vertical", "horizontal", "internleft", 
-				"internright", "interntop", "internbottom", "wall_tile", 
-				"background_tile", "no_gameobject", "gate", "invisible_wall" };
-		int[][] tilemap;
-		// layout: better not let the Eclipse formatter get at this...
-		if(level == 1){
-		tilemap = new int[][] {
-				{10,10,10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,10, 10 },
-				{10, 0, 5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5, 1, 10 },
-				{10, 4,11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11,  4, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 4, 10 },
-				{10, 4,11,  0,  5,  5,  1, 11,  0,  5,  5,  5,  1, 11,  4, 11,  0,  5,  5,  5,  1, 11,  0,  5,  5,  1, 12, 4, 10 },
-				{10, 4,11,  4, 12, 12,  4, 11,  4, 12, 12, 12,  4, 11,  4, 11,  4, 12, 12, 12,  4, 11,  4, 12, 12,  4, 12, 4, 10 }, 
-				{10, 4,11,  2,  5,  5,  3, 14,  2,  5,  5,  5,  3, 14,  9, 14,  2,  5,  5,  5,  3, 14,  2,  5,  5,  3, 12, 4, 10 },
-				{10, 4,11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 14, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 4, 10 },
-				{10, 4,14,  6,  5,  5,  7, 14,  8, 11,  6,  5,  5,  5,  5,  5,  5,  5,  7, 11,  8, 14,  6,  5,  5,  7, 14, 4, 10 },
-				{10, 4,11, 11, 11, 11, 11, 11,  4, 11, 11, 11, 11, 11,  4, 11, 11, 11, 11, 11,  4, 11, 11, 11, 11, 11, 11, 4, 10 },
-				{10, 2, 5,  5,  5,  5,  1, 11,  4,  5,  5,  5,  7, 11,  4, 11,  6,  5,  5,  5,  4, 11,  0,  5,  5,  5,  5, 3, 10 },
-				{10,12,12, 12, 12, 12,  4, 11,  4, 11, 11, 11, 11, 11, 14, 11, 11, 11, 11, 11,  4, 11,  4, 12, 12, 12, 12,12, 10 },
-				{10,12,12, 12, 12, 12,  4, 11,  4, 11,  0,  5,  5, 13, 13, 13,  5,  5,  1, 11,  4, 11,  4, 12, 12, 12, 12,12, 10 },
-				{10, 5, 5,  5,  5,  5,  3, 14,  9, 14,  4, 12, 12, 13, 13, 13, 12, 12,  4, 14,  9, 14,  2,  5,  5,  5,  5, 5, 10 },
-				{10,11,11, 11, 11, 11, 11, 11, 14, 11,  4, 12, 12, 12, 12, 12, 12, 12,  4, 11, 14, 11, 11, 11, 11, 11, 11,11, 10 },
-				{10, 5, 5,  5,  5,  5,  1, 14,  8, 14,  4, 12, 12, 12, 12, 12, 12, 12,  4, 14,  8, 14,  0,  5,  5,  5,  5, 5, 10 },
-				{10,12,12, 12, 12, 12,  4, 11,  4, 11,  2,  5,  5,  5,  5,  5,  5,  5,  3, 11,  4, 11,  4, 12, 12, 12, 12,12, 10 },
-				{10,12,12, 12, 12, 12,  4, 11,  4, 11, 12, 12, 12, 12, 12, 12, 12, 12, 12, 11,  4, 11,  4, 12, 12, 12, 12,12, 10 },
-				{10, 0, 5,  5,  5,  5,  3, 11,  9, 11,  6,  5,  5,  5,  5,  5,  5,  5,  7, 11,  9, 11,  2,  5,  5,  5,  5, 1, 10 },
-				{10, 4,11, 11, 11, 14, 11, 11, 14, 11, 14, 11, 11, 11,  4, 11, 11, 11, 14, 11, 14, 11, 14, 11, 11, 11, 11, 4, 10 },
-				{10, 4,11,  6,  5,  5,  1, 11,  6,  5,  5,  5,  7, 11,  9, 11,  6,  5,  5,  5,  7, 11,  0,  5,  5,  7, 11, 4, 10 },
-				{10, 4,11, 11, 11, 11,  4, 11, 11, 11, 14, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11,  4, 11, 11, 11, 11, 4, 10 },
-				{10, 4, 5,  5,  7, 11,  9, 14,  8, 11,  6,  5,  5,  5,  5,  5,  5,  5,  7, 11,  8, 11,  9, 11,  6,  5,  5, 4, 10 },
-				{10, 4,11, 11, 11, 11, 11, 11,  4, 11, 11, 11, 11, 11,  4, 11, 11, 11, 11, 11,  4, 11, 14, 11, 14, 11, 11, 4, 10 },
-				{10, 4,11,  6,  5,  5,  5,  5,  5,  5,  5,  5,  7, 11,  9, 11,  6,  5,  5,  5,  5,  5,  5,  5,  5,  7, 11, 4, 10 },
-				{10, 4,11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 14, 11, 14, 11, 14, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 4, 10 },
-				{10, 2, 5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5, 3, 10 },
-				{10,10,10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,10, 10 },
-		};
-		gameTiles = new GameTiles(tileImagesNames, tilemap, 20);
-		setTileMap(gameTiles);
+		String[] tileImagesNames = generator.getTileImagesNames();
+		if(level == 1){tileMap = generator.getTilemap1();}
+		if(level == 2){tileMap = generator.getTilemap2();}	
+		gameTiles = new GameTiles(tileImagesNames, tileMap, 20);
+		GameTiles myTiles = new GameTiles(tileImagesNames, tileMap, 20);
+		setTileMap(myTiles);
 		Log.d("pacman", "GameTiles created");
-		}
-		if(level == 2){
-		tilemap = new int[][] {
-					{10,10,10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,10, 10 },
-					{10, 0, 5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5, 1, 10 },
-					{10, 4,-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,  4, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 4, 10 },
-					{10, 4,-1,  6,  5,  5,  7, -1,  6,  5,  5,  5,  7, -1,  4, -1,  6,  5,  5,  5,  7, -1,  6,  5,  5,  7, -1, 4, 10 },
-					{10, 4,-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,  4, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 4, 10 }, 
-					{10, 4,-1,  0,  5,  5,  1, -1,  6,  5,  5,  5,  7, -1,  9, -1,  6,  5,  5,  5,  7, -1,  0,  5,  5,  1, -1, 4, 10 },
-					{10, 4,-1,  4, -1, -1,  4, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,  4, -1, -1,  4, -1, 4, 10 },
-					{10, 4,-1,  2,  5,  5,  3, -1,  8, -1,  6,  5,  5,  7, -1,  6,  5,  5,  7, -1,  8, -1,  2,  5,  5,  3, -1, 4, 10 },
-					{10, 4,-1, -1, -1, -1, -1, -1,  4, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,  4, -1, -1, -1, -1, -1, -1, 4, 10 },
-					{10, 2, 5,  5,  5,  5,  1, -1,  4, -1,  6,  5,  5,  5,  5,  5,  5,  5,  7, -1,  4, -1,  0,  5,  5,  5,  5, 3, 10 },
-					{10,-1,-1, -1, -1, -1,  4, -1,  4, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,  4, -1,  4, -1, -1, -1, -1,-1, 10 },
-					{10,-1,-1, -1, -1, -1,  4, -1,  4, -1,  0,  5,  5,  5,  5,  5,  5,  5,  1, -1,  4, -1,  4, -1, -1, -1, -1,-1, 10 },
-					{10, 5, 5,  5,  5,  5,  3, -1,  9, -1,  4, -1, -1, -1, -1, -1, -1, -1,  4, -1,  9, -1,  2,  5,  5,  5,  5, 5, 10 },
-					{10,-1,-1, -1, -1, -1, -1, -1, -1, -1,  4, -1, -1, -1, -1, -1, -1, -1,  4, -1, -1, -1, -1, -1, -1, -1, -1,-1, 10 },
-					{10, 5, 5,  5,  5,  5,  1, -1,  8, -1,  4, -1, -1, -1, -1, -1, -1, -1,  4, -1,  8, -1,  0,  5,  5,  5,  5, 5, 10 },
-					{10,-1,-1, -1, -1, -1,  4, -1,  4, -1,  2,  5,  5,  5,  5,  5,  5,  5,  3, -1,  4, -1,  4, -1, -1, -1, -1,-1, 10 },
-					{10,-1,-1, -1, -1, -1,  4, -1,  4, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,  4, -1,  4, -1, -1, -1, -1,-1, 10 },
-					{10, 0, 5,  5,  5,  5,  3, -1,  9, -1,  6,  5,  5,  5,  5,  5,  5,  5,  7, -1,  9, -1,  2,  5,  5,  5,  5, 1, 10 },
-					{10, 4,-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,  4, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 4, 10 },
-					{10, 4,-1,  0,  5,  5,  7, -1,  6,  5,  5,  5,  7, -1,  9, -1,  6,  5,  5,  5,  7, -1,  0,  5,  5,  7, -1, 4, 10 },
-					{10, 4,-1,  4, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,  4, -1, -1, -1, -1, 4, 10 },
-					{10, 4,-1,  9, -1,  8, -1, -1,  8, -1,  6,  5,  5,  5,  5,  5,  5,  5,  7, -1,  8, -1,  9, -1,  6,  5,  5, 4, 10 },
-					{10, 4,-1, -1, -1,  4, -1, -1,  4, -1, -1, -1, -1, -1,  4, -1, -1, -1, -1, -1,  4, -1, -1, -1, -1, -1, -1, 4, 10 },
-					{10, 4,-1,  6,  5,  3,  5,  5,  5,  5,  5,  5,  7, -1,  9, -1,  6,  5,  5,  5,  5,  5,  5,  5,  5,  7, -1, 4, 10 },
-					{10, 4,-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 4, 10 },
-					{10, 2, 5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5, 3, 10 },
-					{10,10,10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,10, 10 },
-			};
-		
-		gameTiles = new GameTiles(tileImagesNames, tilemap, 20);
-		setTileMap(gameTiles);
-		Log.d("pacman", "GameTiles created");
-		}
 	}
+
 
 	/**
 	 * Update the game. At this moment, we only need to update the Dashboard.

@@ -19,20 +19,25 @@ import android.gameengine.icadroids.objects.collisions.TileCollision;
 import android.util.Log;
 
 
-public class Pacman extends Creature implements ICollision
+public class Pacman extends Creature implements ICollision, IAlarm 
 {
 	private PacmanApplication app;
 	private int speed, currentDirection, previousDirection, score, dotsEaten, lives;
 	private double currentX, currentY;
 	private boolean playerAction;
-	private Alarm alarm;
+	private Alarm myAlarm;
 	private Position position;
+	private boolean hunter;
+
 	 
-	public Pacman(PacmanApplication app, int speed, int xCor, int yCor) {
+	public Pacman(PacmanApplication app, int speed, int xCor, int yCor) 
+	{
 		this.app = app;
 		this.speed = speed;
 		
 		position = new Position(xCor, yCor);
+		myAlarm = new Alarm(2, 60, this);
+		//myAlarm.startAlarm();
 		
 		setSprite("pacman_right_strip4", 4);
 		setDirection(90);
@@ -41,6 +46,7 @@ public class Pacman extends Creature implements ICollision
 		score = -10;
 		playerAction = false;
 		lives = 3;
+		hunter = false;
 	}
 
 	@Override
@@ -52,7 +58,8 @@ public class Pacman extends Creature implements ICollision
 		setMovement();
 	}
 
-	private void collisionHandler() {
+	private void collisionHandler() 
+	{
 		ArrayList<GameObject> collided = getCollidedObjects();
 		if (collided != null)
 		{
@@ -82,11 +89,18 @@ public class Pacman extends Creature implements ICollision
 						app.restart();
 					}
 				}
+				if (gameObject instanceof PowerUp)
+				{
+					score = score + ((PowerUp) gameObject).getPoints();
+					app.deleteGameObject(gameObject);
+					activateHunterMode();
+				}
 			}
 		}
 	}
 
-	private void setMovement() {
+	private void setMovement() 
+	{
 		boolean buttonPressed = false;
 		if (OnScreenButtons.dPadUp || OnScreenButtons.dPadDown
 				|| OnScreenButtons.dPadLeft || OnScreenButtons.dPadRight)
@@ -196,13 +210,23 @@ public class Pacman extends Creature implements ICollision
 				{
 					setSpeed(0);
 				}
-				
-				return; 
 			}
-		}
-		
-		playerAction = false;
+			
+			playerAction = false;
+		}			
 	}
+	
+	private void activateHunterMode()
+	{
+		myAlarm.restartAlarm();
+		hunter = true;
+	}
+	
+	public void triggerAlarm(int id) { // Pacman wordt slachtoffer
+		Log.d("Pacman", "Alarm gaat af");
+		hunter = false;
+		myAlarm.pauseAlarm();
+	    }
 	
 	public int getScore()
 	{

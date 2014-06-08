@@ -52,8 +52,7 @@ public class PointController
 					int yCor = tile.getTileY();
 					int tileType = tile.getTileType();
 					
-					Log.d("tileType", Integer.toString(tileType));
-				
+					Log.d("tileType", Integer.toString(tileType));				
 				
 					if (tileType == 11 || tileType == 14)
 					{
@@ -61,8 +60,13 @@ public class PointController
 						NormalPoint normalPoint = new NormalPoint(app);
 						app.setOnNormalPointList(normalPoint);
 						app.addGameObject(normalPoint, xCor, yCor);
-				
 					}
+					/*if (tileType == 12)
+					{
+						Log.d("PowerUps", "placing powerUps");
+						PowerUp powerUp = new PowerUp(app);
+						app.addGameObject(powerUp, xCor, yCor);				
+					}*/
 				}
 			}
 		}
@@ -96,6 +100,32 @@ public class PointController
 		
 	}
 	
+	public void placePowerUps() 
+	{
+		for (int i = 0; i < tiles.length; i++ )
+		{
+			for (int j = 0; j < tiles[i].length; j++)
+			{
+				if (tiles[i][j] != null)
+				{
+					Tile tile = tiles[i][j];
+					int xCor = tile.getTileX();
+					int yCor = tile.getTileY();
+					int tileType = tile.getTileType();
+					
+					Log.d("tileType", Integer.toString(tileType));				
+				    
+					if (tileType == 12)
+					{
+						Log.d("PowerUps", "placing powerUps");
+						PowerUp powerUp = new PowerUp(app);
+						app.addGameObject(powerUp, xCor, yCor);				
+					}
+				}
+			}
+		}
+	}
+	
 	/**
 	 * Checks if the given x and y coordinates are already occupied
 	 * by a wall tile.
@@ -117,12 +147,12 @@ public class PointController
 					int tileY = tile.getTileY();
 					int tileType = tile.getTileType();
 					
-					if (tileType != 11)
-					{
+					if (tileType != 11 || tileType != 12)
+					{ 
 						if (xCor == tileX && yCor == tileY)
 						{
 							return true;
-						}
+						}					  
 					}
 				}
 			}
@@ -149,6 +179,11 @@ public class PointController
 	public int getNumberOfNormalPoints()
 	{
 		return numberOfNormalPoints;
+	}
+	
+	public Alarm getAlarm()
+	{
+		return alarm;
 	}
 }
 

@@ -2,11 +2,13 @@ package game;
 
 import java.util.List;
 
+import android.gameengine.icadroids.alarms.Alarm;
+import android.gameengine.icadroids.alarms.IAlarm;
 import android.gameengine.icadroids.objects.MoveableGameObject;
 import android.gameengine.icadroids.objects.collisions.ICollision;
 import android.gameengine.icadroids.objects.collisions.TileCollision;
 
-public class Creature extends MoveableGameObject implements ICollision 
+public class Creature extends MoveableGameObject implements ICollision
 {
 	public enum Direction
 	{
@@ -24,6 +26,7 @@ public class Creature extends MoveableGameObject implements ICollision
 			return value;
 		}
 	}
+	
 	
 	@Override
 	public void collisionOccurred(List<TileCollision> collidedTiles) {
