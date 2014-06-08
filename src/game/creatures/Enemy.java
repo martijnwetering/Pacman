@@ -85,7 +85,7 @@ public abstract class Enemy extends Creature
 		{
 			for (GameObject gameObject : collided)
 			{
-				if (gameObject instanceof Pacman)
+				if (gameObject instanceof Pacman && !pacman.isHunter())
 				{
 					for (GameObject go : app.items)
 					{
