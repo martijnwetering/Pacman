@@ -39,7 +39,7 @@ public class PacmanApplication extends GameEngine
 
 		TouchInput.use = false;
 		MotionSensor.use = false;
-		OnScreenButtons.use = false;
+		OnScreenButtons.use = true;
 		
 		level = 1;
 		generator = new LevelGenerator();
@@ -55,12 +55,12 @@ public class PacmanApplication extends GameEngine
 		pointController.placeNormalPoints();
 		pointController.placePowerUps();
 		
-		DisplayImage = new DashboardImageView(this, "TheGame");
-		
+		DisplayImage = new DashboardImageView(this, "pacman2");
+		addToDashboard(DisplayImage);
 		
 		//Display = new DashboardTextView(this);		
 		
-		addToDashboard(DisplayImage);
+		
 		//addToDashboard(Display);
 		
 		
@@ -88,16 +88,22 @@ public class PacmanApplication extends GameEngine
 		this.Display.setTextString("PacMan");
 		//this.setResourceName(String resourceName)
 		*/
-		//this.DisplayImage.setWidgetX(400);
-		//this.DisplayImage.setWidgetY(200);
+		this.DisplayImage.setWidgetX(-115);
+		this.DisplayImage.setWidgetY(0);
 		this.DisplayImage.setWidgetWidth(1240);
 		this.DisplayImage.setWidgetHeight(600);
 		//this.DisplayImage.setBackgroundColor(Color.WHITE);
-		
+		if (OnScreenButtons.start)
+		{
+			System.out.println("start!!!!!!!!!");
+			//buttonPressed = true;
+			start = true;
+		}
 		}
 		if(start){
+			System.out.println("start!!!!!!!!!");
 		// this.scoreDisplay.setWidgetWidth(20);
-	    OnScreenButtons.use = false;
+	    OnScreenButtons.use = true;
 		this.scoreDisplay.setWidgetHeight(60);
 		this.scoreDisplay.setWidgetBackgroundColor(Color.WHITE);
 		this.scoreDisplay.setWidgetX(590);
@@ -153,7 +159,9 @@ public class PacmanApplication extends GameEngine
 		{
 			endGame();
 		}
-		
+		if(OnScreenButtons.start){
+			start = true;
+		}
 		this.scoreDisplay.setTextString(
 				"Score: " + String.valueOf(this.pacman.getScore()));
 	}
