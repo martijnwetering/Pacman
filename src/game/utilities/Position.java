@@ -1,11 +1,11 @@
 package game.utilities;
 
-public class PointPosition 
+public class Position 
 {
 	private int xCor;
 	private int yCor;
 
-	public PointPosition(int xCor, int yCor) 
+	public Position(int xCor, int yCor) 
 	{
 		this.xCor = xCor;
 		this.yCor = yCor;

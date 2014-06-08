@@ -12,24 +12,29 @@ import java.util.Vector;
 import android.util.Log;
 import game.utilities.*;
 
-public class PointController implements IAlarm
+public class PointController 
 {
+	final static int SPECIALPOINTONE = 1;
+	final static int SPECIALPOINTTWO = 2;
+	
 	private PacmanApplication app;
 	private Alarm alarm;
 	private Tile[][] tiles;
 	private int numberOfNormalPoints;
+	private int firstSpecialPointPlaced;
+	private int secondSpecialPointPlaced;
 	
-	private ArrayList<PointPosition> specialPointsCords;
+	private ArrayList<Position> specialPointsCords;
 	
 	
 	
 	public PointController(PacmanApplication app) 
 	{
 		this.app = app;
-		alarm = new Alarm(1, 30, this);
-		alarm.startAlarm();
 		tiles = app.getGameTiles().getTileArray();
 		numberOfNormalPoints = 0;
+		firstSpecialPointPlaced = 0;
+		secondSpecialPointPlaced = 0;
 	
 		initializeSpecialPointsCords();
 	}
@@ -49,10 +54,11 @@ public class PointController implements IAlarm
 					
 					Log.d("tileType", Integer.toString(tileType));				
 				
-					if (tileType == 11)
+					if (tileType == 11 || tileType == 14)
 					{
 						numberOfNormalPoints++;
 						NormalPoint normalPoint = new NormalPoint(app);
+						app.setOnNormalPointList(normalPoint);
 						app.addGameObject(normalPoint, xCor, yCor);
 					}
 					/*if (tileType == 12)
@@ -67,23 +73,29 @@ public class PointController implements IAlarm
 	}
 	
 	/**
-	 * This method is called every time the alarm go's off. It checks
-	 * if it can place a point on a random location, if the location is
-	 * already occupied by a tile on which no points are allowed, the
-	 * method will call itself again until it can place a point.
+	 * This method will place place a maximum of two special points. It will
+	 * only place the special point if it hasn't been placed before and it's
+	 * triggered after pacman ate a certain number of normal points.
 	 */
-	public void placeSpecialPoint()
+	public void placeSpecialPoint(int kindOfSpecialPoint)
 	{
-		SpecialPoint specialPoint = new SpecialPoint(app);
-		
-		Random randomNumberGenerator = new Random();
-		int randomNumber = randomNumberGenerator.nextInt(9);
-		
-		PointPosition point =  specialPointsCords.get(randomNumber);
-		int xCor = point.getXCor();
-		int yCor = point.getYCor();
-		
-		app.addGameObject(specialPoint, xCor, yCor);
+		if (kindOfSpecialPoint == SPECIALPOINTONE && firstSpecialPointPlaced == 0 
+				|| kindOfSpecialPoint == SPECIALPOINTTWO && secondSpecialPointPlaced == 0)
+		{
+			SpecialPoint specialPoint = new SpecialPoint(app);
+			
+			Random randomNumberGenerator = new Random();
+			int randomNumber = randomNumberGenerator.nextInt(9);
+			
+			Position point =  specialPointsCords.get(randomNumber);
+			int xCor = point.getXCor();
+			int yCor = point.getYCor();
+			
+			app.addGameObject(specialPoint, xCor, yCor);
+			
+			if (kindOfSpecialPoint == SPECIALPOINTONE) firstSpecialPointPlaced = 1;
+			if (kindOfSpecialPoint == SPECIALPOINTTWO) secondSpecialPointPlaced = 1;
+		}
 				
 		
 	}
@@ -147,23 +159,16 @@ public class PointController implements IAlarm
 		}
 		return false;
 	}
-
-	@Override
-	public void triggerAlarm(int alarmID) {
-		placeSpecialPoint();
-		alarm.setTime(2);
-		alarm.restartAlarm();
-	}
 	
 	private void initializeSpecialPointsCords()
 	{
 		int xCor = 200;
 		int yCor = 320;
 		
-		specialPointsCords = new ArrayList<PointPosition>();
+		specialPointsCords = new ArrayList<Position>();
 		for (int i = 0; i < 9; i++)
 		{
-			PointPosition point = new PointPosition(xCor, yCor);
+			Position point = new Position(xCor, yCor);
 			specialPointsCords.add(point);
 			xCor += 20;
 		}

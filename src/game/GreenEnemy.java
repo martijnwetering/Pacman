@@ -1,0 +1,100 @@
+package game;
+
+import java.util.List;
+import java.util.Random;
+
+import android.gameengine.icadroids.objects.collisions.TileCollision;
+
+public class GreenEnemy extends Enemy 
+{
+
+	public GreenEnemy(Pacman pacman, int xCor, int yCor) 
+	{
+		super(pacman, xCor, yCor);
+		setSprite("green_strip3", 3);
+		setFrameNumber(0);
+		setDirectionSpeed(Direction.UP.getValue(), speed);
+	}
+
+	@Override
+	public void move(List<TileCollision> collidedTiles) 
+	{
+		for (TileCollision tc : collidedTiles)
+		{
+			
+			int tileType = tc.theTile.getTileType();
+			
+			boolean isWall = false;
+			boolean invisibleWall = false;
+			// 11 and 12 are the only tiles that are not walls.
+			for (int i = 0; i < 11; i++)
+			{
+				if (tileType == i) isWall = true;
+			}
+			if (tileType == 14) 
+			{
+				invisibleWall = true;
+			}
+			
+			// Gate.
+			if (tileType == 13 && tc.collisionSide == 0)
+			{
+				int direction = Direction.RIGHT.getValue();
+				currentDirection = direction;
+				moveUpToTileSide(tc);
+				setDirection(direction);
+			}
+			
+			else if (isWall)
+			{
+				int direction = randomDirection();
+				currentDirection = direction;
+				moveUpToTileSide(tc);
+				setDirection(direction);
+			}
+			else if (invisibleWall)
+			{
+				int direction = randomDirection();
+				setDirectionSpeed(direction, speed);
+			}
+		}
+	}
+	
+	@Override
+	public void update()
+	{
+		super.update();
+	}
+	
+	@Override
+	public void collisionOccurred(List<TileCollision> collidedTiles) 
+	{
+		move(collidedTiles);
+	}
+	
+	private int randomDirection()
+	{
+		int[] directions = {0, 90, 180, 270};
+		int randomDirection = randomNumberGenerator.nextInt(4);
+		
+		return directions[randomDirection];
+	}
+	
+	private int randomLeftOrRight()
+	{
+		int[] directions = {90, 270};
+		int randomDirection = randomNumberGenerator.nextInt(2);
+		
+		return directions[randomDirection];
+	}
+	
+	private int randomUpOrDown()
+	{
+		int[] directions = {0, 180};
+		int randomDirection = randomNumberGenerator.nextInt(2);
+		
+		return directions[randomDirection];
+	}
+
+}
+

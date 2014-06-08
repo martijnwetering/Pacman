@@ -10,6 +10,22 @@ import android.gameengine.icadroids.objects.collisions.TileCollision;
 
 public class Creature extends MoveableGameObject implements ICollision
 {
+	public enum Direction
+	{
+		UP(0), RIGHT(90), DOWN(180), LEFT(270);
+		
+		private final int value;
+		
+		private Direction(int value) 
+		{
+            this.value = value;
+		}
+		
+		public int getValue()
+		{
+			return value;
+		}
+	}
 	
 	
 	@Override

@@ -1,5 +1,7 @@
 package game;
 
+import game.utilities.Position;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,35 +22,20 @@ import android.util.Log;
 public class Pacman extends Creature implements ICollision, IAlarm 
 {
 	private PacmanApplication app;
-
-	private int speed, currentDirection, previousDirection, score, dotsEaten;
+	private int speed, currentDirection, previousDirection, score, dotsEaten, lives;
 	private double currentX, currentY;
+	private boolean playerAction;
 	private Alarm myAlarm;
-	//zorgt ervoor of pacman jager is of slachtoffer.
-    private boolean hunter;
+	private Position position;
+	private boolean hunter;
 
-	public enum Direction
-	{
-		UP(0), RIGHT(90), DOWN(180), LEFT(270);
-		
-		private final int value;
-		
-		private Direction(int value) 
-		{
-            this.value = value;
-		}
-		
-		public int getValue()
-		{
-			return value;
-		}
-	}
-	
 	 
-	public Pacman(PacmanApplication app, int speed) {
+	public Pacman(PacmanApplication app, int speed, int xCor, int yCor) 
+	{
 		this.app = app;
 		this.speed = speed;
 		
+		position = new Position(xCor, yCor);
 		myAlarm = new Alarm(2, 60, this);
 		//myAlarm.startAlarm();
 		
@@ -57,16 +44,22 @@ public class Pacman extends Creature implements ICollision, IAlarm
 		currentDirection = 90;
 		dotsEaten = 0;
 		score = -10;
+		playerAction = false;
+		lives = 3;
 		hunter = false;
 	}
-	
+
 	@Override
 	public void update()
 	{
 		super.update();
-				
 		animatePacman();
+		collisionHandler();
+		setMovement();
+	}
 
+	private void collisionHandler() 
+	{
 		ArrayList<GameObject> collided = getCollidedObjects();
 		if (collided != null)
 		{
@@ -83,6 +76,19 @@ public class Pacman extends Creature implements ICollision, IAlarm
 					score = score + ((SpecialPoint) gameObject).getPoints();
 					app.deleteGameObject(gameObject);
 				}
+				if (gameObject instanceof Enemy)
+				{
+					if (lives > 0 && !app.resetting)
+					{
+						app.resetting = true;
+						lives--;
+						app.freezeMap();
+					}
+					else if (lives == 0)
+					{
+						app.restart();
+					}
+				}
 				if (gameObject instanceof PowerUp)
 				{
 					score = score + ((PowerUp) gameObject).getPoints();
@@ -91,7 +97,10 @@ public class Pacman extends Creature implements ICollision, IAlarm
 				}
 			}
 		}
-		
+	}
+
+	private void setMovement() 
+	{
 		boolean buttonPressed = false;
 		if (OnScreenButtons.dPadUp || OnScreenButtons.dPadDown
 				|| OnScreenButtons.dPadLeft || OnScreenButtons.dPadRight)
@@ -102,30 +111,34 @@ public class Pacman extends Creature implements ICollision, IAlarm
 		if (OnScreenButtons.dPadUp || (MotionSensor.tiltUp && !buttonPressed))
 		{
 			previousDirection = currentDirection;
+			playerAction = true;
 			currentDirection = Direction.UP.getValue();
-			setDirectionSpeed(Direction.UP.getValue(), speed);
+			setDirectionSpeed(currentDirection, speed);
 		}
 		if (OnScreenButtons.dPadDown
 				|| (MotionSensor.tiltDown && !buttonPressed))
 		{
-			previousDirection = currentDirection;			
+			previousDirection = currentDirection;
+			playerAction = true;
 			currentDirection = Direction.DOWN.getValue();
-			setDirectionSpeed(Direction.DOWN.getValue(), speed);
+			setDirectionSpeed(currentDirection, speed);
 		}
 		if (OnScreenButtons.dPadRight
 				|| (MotionSensor.tiltRight && !buttonPressed))
 		{
-			previousDirection = currentDirection;		
+			previousDirection = currentDirection;	
+			playerAction = true;
 			currentDirection = Direction.RIGHT.getValue();
-			setDirectionSpeed(Direction.RIGHT.getValue(), speed);						
+			setDirectionSpeed(currentDirection, speed);						
 			
 		}
 		if (OnScreenButtons.dPadLeft
 				|| (MotionSensor.tiltLeft && !buttonPressed))
 		{
-			previousDirection = currentDirection;			
+			previousDirection = currentDirection;
+			playerAction = true;
 			currentDirection = Direction.LEFT.getValue();
-			setDirectionSpeed(Direction.LEFT.getValue(), speed);
+			setDirectionSpeed(currentDirection, speed);
 		}
 	}
 	
@@ -162,18 +175,45 @@ public class Pacman extends Creature implements ICollision, IAlarm
 	public void collisionOccurred(List<TileCollision> collidedTiles) 
 	{
 		super.collisionOccurred(collidedTiles);
+		
+		double direction = getDirection();
+		
 		for (TileCollision tc : collidedTiles)
 		{
-			if (tc.theTile.getTileType() != 11)
-				if(tc.theTile.getTileType() != 12){
-			{ 
-					undoMove();
-					currentDirection = previousDirection;
-					setDirectionSpeed(previousDirection, speed);
-					return;	
+			int collisionSide = tc.collisionSide;
+			boolean movingUpOrDown = previousDirection == 0 || previousDirection == 180;
+			boolean movingRightOrLeft = previousDirection == 90 || previousDirection == 270;
+			
+			if (tc.theTile.getTileType() != 11 && tc.theTile.getTileType() != 14)
+			{
+				
+				moveUpToTileSide(tc);
+				if (movingUpOrDown && playerAction)
+				{	
+					
+					if (collisionSide == 1 || collisionSide == 3)
+					{
+						
+						currentDirection = previousDirection;
+						setDirectionSpeed(previousDirection, speed);
+					}
+				}
+				else if (movingRightOrLeft && playerAction)
+				{
+					if (collisionSide == 0 || collisionSide == 2)
+					{
+						currentDirection = previousDirection;
+						setDirectionSpeed(previousDirection, speed);
+					}
+				}
+				else 
+				{
+					setSpeed(0);
+				}
 			}
-		}
-		}
+			
+			playerAction = false;
+		}			
 	}
 	
 	private void activateHunterMode()
@@ -198,6 +238,17 @@ public class Pacman extends Creature implements ICollision, IAlarm
 		return dotsEaten;
 	}
 	
-	
+	public int getLives() {
+		return lives;
+	}
 
+	public int getXCor() {
+		return position.getXCor();
+	}
+	
+	public int getYCor() {
+		return position.getYCor();
+	}
+	
+	
 }
