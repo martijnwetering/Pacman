@@ -8,12 +8,11 @@ import android.gameengine.icadroids.objects.collisions.TileCollision;
 public class OrangeEnemy extends Enemy 
 {
 
-	public OrangeEnemy(Pacman pacman, int xCor, int yCor) 
+	public OrangeEnemy(Pacman pacman, PacmanApplication app, int xCor, int yCor, int numberOfDotsToActivate) 
 	{
-		super(pacman, xCor, yCor);
+		super(pacman, app, xCor, yCor, numberOfDotsToActivate);
 		setSprite("orange_strip3", 3);
 		setFrameNumber(0);
-		setDirectionSpeed(Direction.UP.getValue(), speed);
 	}
 
 	@Override
@@ -66,6 +65,11 @@ public class OrangeEnemy extends Enemy
 		int randomDirection = randomNumberGenerator.nextInt(4);
 		
 		return directions[randomDirection];
+	}
+	
+	@Override
+	public void setDefaultSprite() {
+		setSprite("orange_strip3", 3);
 	}
 
 }

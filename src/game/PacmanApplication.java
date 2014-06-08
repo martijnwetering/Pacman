@@ -78,16 +78,16 @@ public class PacmanApplication extends GameEngine implements IAlarm
 	}
 
 	private void addGhosts() {
-		redEnemy = new RedEnemy(pacman, 280, 260);
+		redEnemy = new RedEnemy(pacman, this, 280, 260, 0);
 		addGameObject(redEnemy, redEnemy.getXcor(), redEnemy.getYcor());
 		
-		orangeEnemy = new OrangeEnemy(pacman, 300, 260);
+		orangeEnemy = new OrangeEnemy(pacman, this, 300, 260, 5);
 		addGameObject(orangeEnemy, orangeEnemy.getXcor(), orangeEnemy.getYcor());
 		
-		greenEnemy = new GreenEnemy(pacman, 280, 280);
+		greenEnemy = new GreenEnemy(pacman, this, 280, 280, 10);
 		addGameObject(greenEnemy, greenEnemy.getXcor(), greenEnemy.getYcor());
 		
-		blueEnemy = new BlueEnemy(pacman, 300, 280);
+		blueEnemy = new BlueEnemy(pacman, this, 300, 280, 12);
 		addGameObject(blueEnemy, blueEnemy.getXcor(), blueEnemy.getYcor());
 	}
 	
@@ -203,13 +203,13 @@ public class PacmanApplication extends GameEngine implements IAlarm
 		pacman.jumpToStartPosition();
 		pacman.setDirection(Direction.RIGHT.getValue());
 		redEnemy.jumpToStartPosition();
-		redEnemy.setDirectionSpeed(Direction.UP.getValue(), 4);
+		redEnemy.setDirection(Direction.UP.getValue());
 		greenEnemy.jumpToStartPosition();
-		greenEnemy.setDirectionSpeed(Direction.UP.getValue(), 4);
+		greenEnemy.setDirection(Direction.UP.getValue());
 		blueEnemy.jumpToStartPosition();
-		blueEnemy.setDirectionSpeed(Direction.UP.getValue(), 4);
+		blueEnemy.setDirection(Direction.UP.getValue());
 		orangeEnemy.jumpToStartPosition();
-		orangeEnemy.setDirectionSpeed(Direction.UP.getValue(), 4);
+		orangeEnemy.setDirection(Direction.UP.getValue());
 		
 		resetting = false;
 		

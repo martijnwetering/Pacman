@@ -8,12 +8,11 @@ import android.gameengine.icadroids.objects.collisions.TileCollision;
 public class GreenEnemy extends Enemy 
 {
 
-	public GreenEnemy(Pacman pacman, int xCor, int yCor) 
+	public GreenEnemy(Pacman pacman, PacmanApplication app, int xCor, int yCor, int numberOfDotsToActivate) 
 	{
-		super(pacman, xCor, yCor);
+		super(pacman, app, xCor, yCor, numberOfDotsToActivate);
 		setSprite("green_strip3", 3);
 		setFrameNumber(0);
-		setDirectionSpeed(Direction.UP.getValue(), speed);
 	}
 
 	@Override
@@ -94,6 +93,11 @@ public class GreenEnemy extends Enemy
 		int randomDirection = randomNumberGenerator.nextInt(2);
 		
 		return directions[randomDirection];
+	}
+
+	@Override
+	public void setDefaultSprite() {
+		setSprite("green_strip3", 3);
 	}
 
 }

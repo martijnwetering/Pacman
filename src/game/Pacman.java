@@ -21,23 +21,21 @@ import android.util.Log;
 
 public class Pacman extends Creature implements ICollision, IAlarm 
 {
-	private PacmanApplication app;
-	private int speed, currentDirection, previousDirection, score, dotsEaten, lives;
-	private double currentX, currentY;
+	private int speed, currentDirection, previousDirection, score, dotsEaten, dotsEatenOnTurn, lives;
 	private boolean playerAction;
 	private Alarm myAlarm;
 	private Position position;
 	private boolean hunter;
 
-	 
 	public Pacman(PacmanApplication app, int speed, int xCor, int yCor) 
 	{
+		super(app);
+		
 		this.app = app;
 		this.speed = speed;
 		
 		position = new Position(xCor, yCor);
-		myAlarm = new Alarm(2, 60, this);
-		//myAlarm.startAlarm();
+		myAlarm = new Alarm(2, 300, this);
 		
 		setSprite("pacman_right_strip4", 4);
 		setDirection(90);
@@ -47,6 +45,7 @@ public class Pacman extends Creature implements ICollision, IAlarm
 		playerAction = false;
 		lives = 3;
 		hunter = false;
+		dotsEatenOnTurn = 0;
 	}
 
 	@Override
@@ -70,6 +69,7 @@ public class Pacman extends Creature implements ICollision, IAlarm
 					score = score + ((NormalPoint) gameObject).getPoints();
 					app.deleteGameObject(gameObject);
 					dotsEaten++;
+					dotsEatenOnTurn++;
 				} 
 				if (gameObject instanceof SpecialPoint)
 				{
@@ -78,10 +78,18 @@ public class Pacman extends Creature implements ICollision, IAlarm
 				}
 				if (gameObject instanceof Enemy)
 				{
-					if (lives > 0 && !app.resetting)
+					if (hunter)
+					{
+						Enemy enemy = (Enemy)gameObject;
+						score = score + enemy.getPoints();
+						enemy.jumpToStartPosition();
+						enemy.setDirection(Direction.UP.getValue());
+					}
+					else if (lives > 0 && !app.resetting)
 					{
 						app.resetting = true;
 						lives--;
+						dotsEatenOnTurn = 0;
 						app.freezeMap();
 					}
 					else if (lives == 0)
@@ -171,7 +179,7 @@ public class Pacman extends Creature implements ICollision, IAlarm
 		counter++;
 	}
 	
-	// handler for tile collisions.
+	// Handler for tile collisions.
 	@Override
 	public void collisionOccurred(List<TileCollision> collidedTiles) 
 	{
@@ -222,11 +230,11 @@ public class Pacman extends Creature implements ICollision, IAlarm
 		hunter = true;
 	}
 	
-	public void triggerAlarm(int id) { // Pacman wordt slachtoffer
-		Log.d("Pacman", "Alarm gaat af");
+	public void triggerAlarm(int id) 
+	{ 
 		hunter = false;
 		myAlarm.pauseAlarm();
-	    }
+	}
 	
 	public int getScore()
 	{
@@ -250,5 +258,12 @@ public class Pacman extends Creature implements ICollision, IAlarm
 		return position.getYCor();
 	}
 	
+	public boolean isHunter() {
+		return hunter;
+	}
+	
+	public int getDotsEatenOnTurn() {
+		return dotsEatenOnTurn;
+	}
 	
 }

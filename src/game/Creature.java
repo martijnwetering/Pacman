@@ -10,6 +10,13 @@ import android.gameengine.icadroids.objects.collisions.TileCollision;
 
 public class Creature extends MoveableGameObject implements ICollision
 {
+	protected PacmanApplication app;
+	
+	public Creature(PacmanApplication app)
+	{
+		this.app = app;
+	}
+	
 	public enum Direction
 	{
 		UP(0), RIGHT(90), DOWN(180), LEFT(270);
