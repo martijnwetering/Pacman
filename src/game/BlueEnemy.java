@@ -15,34 +15,67 @@ public class BlueEnemy extends Enemy
 		setFrameNumber(0);
 		setDirectionSpeed(Direction.UP.getValue(), speed);
 	}
+	
 
 	@Override
 	public void move(List<TileCollision> collidedTiles) 
 	{
 		for (TileCollision tc : collidedTiles)
 		{
-			
-			int tileType = tc.theTile.getTileType();
-			
-			boolean isWall = false;
-			// 11 and 12 are the only tiles that are not walls.
-			for (int i = 0; i < 11; i++)
+			if(!victum || eaten)
 			{
-				if (tileType == i) isWall = true;
+				int tileType = tc.theTile.getTileType();
+				
+				boolean isWall = false;
+				// 11 and 12 are the only tiles that are not walls.
+				for (int i = 0; i < 11; i++)
+				{
+					if (tileType == i) isWall = true;
+				}
+				
+				if (tileType == 13 && tc.collisionSide == 0)
+				{
+					moveUpToTileSide(tc);
+					setDirection(Direction.RIGHT.getValue());
+					return;
+				}
+				
+				if (isWall)
+				{
+					moveUpToTileSide(tc);
+					setDirection(randomDirection());
+					return;
+				}
 			}
-			
-			if (tileType == 13 && tc.collisionSide == 0)
+			if(victum)
 			{
-				moveUpToTileSide(tc);
-				setDirection(Direction.RIGHT.getValue());
-				return;
+				int tileType = tc.theTile.getTileType();
+				
+				boolean isWall = false;
+				// 11 and 12 are the only tiles that are not walls.
+				for (int i = 0; i < 11; i++)
+				{
+					if (tileType == i) isWall = true;
+				}
+				
+				if (tileType == 13 && tc.collisionSide == 0)
+				{
+					moveUpToTileSide(tc);
+					setDirection(Direction.RIGHT.getValue());
+					return;
+				}
+				
+				if (isWall)
+				{
+					moveUpToTileSide(tc);
+					setDirection(randomDirection());
+					return;
+				}
 			}
-			
-			if (isWall)
+			if(eaten)
 			{
-				moveUpToTileSide(tc);
-				setDirection(randomDirection());
-				return;
+				System.out.println("Victum true");
+				moveTowardsAPoint(260, 260);	
 			}
 		}
 	}

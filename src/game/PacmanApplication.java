@@ -26,8 +26,8 @@ public class PacmanApplication extends GameEngine implements IAlarm
 {
 	private Pacman pacman;
 	private DashboardTextView scoreDisplay;
-	private DashboardTextView Display;
-	private DashboardImageView DisplayImage; 
+	//private DashboardTextView Display;
+	//private DashboardImageView DisplayImage; 
 	private GameTiles gameTiles;
 	private PointController pointController;
 	private Enemy redEnemy, orangeEnemy, greenEnemy, blueEnemy;
@@ -38,7 +38,7 @@ public class PacmanApplication extends GameEngine implements IAlarm
 	private LevelGenerator generator;
 	private int[][] tileMap;
 	private int level;
-	private boolean start = false;
+	//private boolean start = true;
 	
 	 
 
@@ -60,8 +60,8 @@ public class PacmanApplication extends GameEngine implements IAlarm
 		
 		normalPoints = new ArrayList<NormalPoint>();
 		
-		addPacman(100, 260);
-		
+		addPacman(40, 60);
+		/*
 		redEnemy = new RedEnemy(pacman, 280, 260);
 		addGameObject(redEnemy, redEnemy.getXcor(), redEnemy.getYcor());
 		
@@ -70,7 +70,7 @@ public class PacmanApplication extends GameEngine implements IAlarm
 		
 		greenEnemy = new GreenEnemy(pacman, 280, 280);
 		addGameObject(greenEnemy, greenEnemy.getXcor(), greenEnemy.getYcor());
-		
+		*/
 		blueEnemy = new BlueEnemy(pacman, 300, 280);
 		addGameObject(blueEnemy, blueEnemy.getXcor(), blueEnemy.getYcor());
 		
@@ -79,8 +79,9 @@ public class PacmanApplication extends GameEngine implements IAlarm
 		pointController.placeNormalPoints();
 		pointController.placePowerUps();
 		
-		DisplayImage = new DashboardImageView(this, "pacman2");
-		addToDashboard(DisplayImage);
+		/*DisplayImage = new DashboardImageView(this, "pacman2");
+		addToDashboard(DisplayImage);*/
+		//addToDashboard(Display);
 		
 		//Display = new DashboardTextView(this);		
 		
@@ -99,19 +100,9 @@ public class PacmanApplication extends GameEngine implements IAlarm
 	
 	private void createDashboard(final DashboardTextView textView, int xCor, int yCor) 
 	{
-		if(!start){/*
-		this.Display.setPadding(140, 10, 10, 10);
-		this.Display.setWidgetHeight(800);
-		this.Display.setWidgetWidth(1200);
-		this.Display.setWidgetBackgroundColor(Color.BLACK);
-		this.Display.setTextColor(Color.WHITE);
-		this.Display.setWidgetX(0);
-		this.Display.setWidgetY(0);
-		this.Display.setTextSize(40);
-		this.Display.setTextScaleX(5);
-		this.Display.setTextString("PacMan");
-		//this.setResourceName(String resourceName)
-		*/
+		/*if(!start){
+		addToDashboard(DisplayImage);
+		addToDashboard(Display);
 		this.DisplayImage.setWidgetX(-115);
 		this.DisplayImage.setWidgetY(0);
 		this.DisplayImage.setWidgetWidth(1240);
@@ -124,10 +115,11 @@ public class PacmanApplication extends GameEngine implements IAlarm
 			start = true;
 		}
 		}
-		if(start){
-			System.out.println("start!!!!!!!!!");
+		if(start){*/
+			//System.out.println("start!!!!!!!!!");
+			//addToDashboard(Display);
 		// this.scoreDisplay.setWidgetWidth(20);
-	    OnScreenButtons.use = true;
+	    //OnScreenButtons.use = true;
 		textView.setWidgetHeight(60);
 		textView.setWidgetBackgroundColor(Color.WHITE);
 		textView.setWidgetX(xCor);
@@ -141,7 +133,7 @@ public class PacmanApplication extends GameEngine implements IAlarm
 			}
 		});
 		}
-	}
+	
 	
 	private void addPacman(int x, int y)
 	{
@@ -174,6 +166,7 @@ public class PacmanApplication extends GameEngine implements IAlarm
 	public void update() {
 		super.update();
 		
+		Enemy.bepaalStatusEnemey();
 		int goalDotsEaten = pointController.getNumberOfNormalPoints();
 		int actualDotsEaten = pacman.getDotsEaten();
 		if (goalDotsEaten == actualDotsEaten)

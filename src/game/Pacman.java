@@ -36,7 +36,7 @@ public class Pacman extends Creature implements ICollision, IAlarm
 		this.speed = speed;
 		
 		position = new Position(xCor, yCor);
-		myAlarm = new Alarm(2, 60, this);
+		myAlarm = new Alarm(2, 400, this); // houdt bij hoe lang pacman in de hunter mode is.
 		//myAlarm.startAlarm();
 		
 		setSprite("pacman_right_strip4", 4);
@@ -76,8 +76,15 @@ public class Pacman extends Creature implements ICollision, IAlarm
 					score = score + ((SpecialPoint) gameObject).getPoints();
 					app.deleteGameObject(gameObject);
 				}
-				if (gameObject instanceof Enemy)
+				if (gameObject instanceof PowerUp)
 				{
+					score = score + ((PowerUp) gameObject).getPoints();
+					app.deleteGameObject(gameObject);
+					activateHunterMode();
+				}
+				if (gameObject instanceof Enemy)
+				{ 
+				  if(!hunter){
 					if (lives > 0 && !app.resetting)
 					{
 						app.resetting = true;
@@ -88,13 +95,13 @@ public class Pacman extends Creature implements ICollision, IAlarm
 					{
 						app.restart();
 					}
+				  }
+				  if(hunter){
+					  app.deleteGameObject(gameObject);
+					  Enemy.eaten = true;
+				  }
 				}
-				if (gameObject instanceof PowerUp)
-				{
-					score = score + ((PowerUp) gameObject).getPoints();
-					app.deleteGameObject(gameObject);
-					activateHunterMode();
-				}
+				
 			}
 		}
 	}
@@ -184,7 +191,7 @@ public class Pacman extends Creature implements ICollision, IAlarm
 			boolean movingUpOrDown = previousDirection == 0 || previousDirection == 180;
 			boolean movingRightOrLeft = previousDirection == 90 || previousDirection == 270;
 			
-			if (tc.theTile.getTileType() != 11 && tc.theTile.getTileType() != 14)
+			if (tc.theTile.getTileType() != 11 && tc.theTile.getTileType() != 12 && tc.theTile.getTileType() != 14)
 			{
 				
 				moveUpToTileSide(tc);
@@ -220,12 +227,14 @@ public class Pacman extends Creature implements ICollision, IAlarm
 	{
 		myAlarm.restartAlarm();
 		hunter = true;
+		System.out.println("hunter = true");
 	}
 	
 	public void triggerAlarm(int id) { // Pacman wordt slachtoffer
 		Log.d("Pacman", "Alarm gaat af");
 		hunter = false;
 		myAlarm.pauseAlarm();
+		System.out.println("hunter = false");
 	    }
 	
 	public int getScore()
@@ -248,6 +257,11 @@ public class Pacman extends Creature implements ICollision, IAlarm
 	
 	public int getYCor() {
 		return position.getYCor();
+	}
+	
+	public boolean getHunter()
+	{
+		return hunter;
 	}
 	
 	

@@ -54,7 +54,7 @@ public class PointController
 					
 					Log.d("tileType", Integer.toString(tileType));				
 				
-					if (tileType == 11 || tileType == 14)
+					if (tileType == 11 || tileType == 15)
 					{
 						numberOfNormalPoints++;
 						NormalPoint normalPoint = new NormalPoint(app);
@@ -147,7 +147,7 @@ public class PointController
 					int tileY = tile.getTileY();
 					int tileType = tile.getTileType();
 					
-					if (tileType != 11 || tileType != 12)
+					if (tileType != 11 || tileType != 15)
 					{ 
 						if (xCor == tileX && yCor == tileY)
 						{
