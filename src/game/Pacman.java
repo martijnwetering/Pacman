@@ -171,12 +171,11 @@ public class Pacman extends Creature implements ICollision, IAlarm
 		counter++;
 	}
 	
+	// handler for tile collisions.
 	@Override
 	public void collisionOccurred(List<TileCollision> collidedTiles) 
 	{
 		super.collisionOccurred(collidedTiles);
-		
-		double direction = getDirection();
 		
 		for (TileCollision tc : collidedTiles)
 		{
@@ -184,7 +183,9 @@ public class Pacman extends Creature implements ICollision, IAlarm
 			boolean movingUpOrDown = previousDirection == 0 || previousDirection == 180;
 			boolean movingRightOrLeft = previousDirection == 90 || previousDirection == 270;
 			
-			if (tc.theTile.getTileType() != 11 && tc.theTile.getTileType() != 14)
+			// If pacman hits a wall 
+			if (tc.theTile.getTileType() != 11 && tc.theTile.getTileType() != 14
+					&& tc.theTile.getTileType() != 15)
 			{
 				
 				moveUpToTileSide(tc);
@@ -211,9 +212,8 @@ public class Pacman extends Creature implements ICollision, IAlarm
 					setSpeed(0);
 				}
 			}
-			
-			playerAction = false;
-		}			
+		}
+		playerAction = false;
 	}
 	
 	private void activateHunterMode()

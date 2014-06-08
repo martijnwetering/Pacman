@@ -25,13 +25,14 @@ public class PacmanApplication extends GameEngine implements IAlarm
 {
 	private Pacman pacman;
 	private DashboardTextView scoreDisplay;
-	private DashboardTextView livesDisplay;
 	private GameTiles gameTiles;
-	private PointController pointController;
 	private Enemy redEnemy, orangeEnemy, greenEnemy, blueEnemy;
 	private Alarm alarm;
 	protected boolean resetting;
-	private ArrayList<NormalPoint> normalPoints; 
+	
+	private PointController pointController;
+	private ArrayList<NormalPoint> normalPoints;
+	private ArrayList<SpecialPoint> specialPoints;
 	
 	private LevelGenerator generator;
 	private int[][] tileMap;
@@ -41,7 +42,6 @@ public class PacmanApplication extends GameEngine implements IAlarm
 
 	@Override
 	protected void initialize() {
-		System.out.println("running pacman");
 
 		TouchInput.use = false;
 		MotionSensor.use = false;
@@ -53,24 +53,11 @@ public class PacmanApplication extends GameEngine implements IAlarm
 		createTileEnvironment();
 		
 		normalPoints = new ArrayList<NormalPoint>();
+		specialPoints = new ArrayList<SpecialPoint>();
 		
 		addPacman(100, 260);
-		
-		redEnemy = new RedEnemy(pacman, 280, 260);
-		addGameObject(redEnemy, redEnemy.getXcor(), redEnemy.getYcor());
-		
-		orangeEnemy = new OrangeEnemy(pacman, 300, 260);
-		addGameObject(orangeEnemy, orangeEnemy.getXcor(), orangeEnemy.getYcor());
-		
-		greenEnemy = new GreenEnemy(pacman, 280, 280);
-		addGameObject(greenEnemy, greenEnemy.getXcor(), greenEnemy.getYcor());
-		
-		blueEnemy = new BlueEnemy(pacman, 300, 280);
-		addGameObject(blueEnemy, blueEnemy.getXcor(), blueEnemy.getYcor());
-		
-		pointController = new PointController(this);
-		pointController.placeNormalPoints();
-		pointController.placePowerUps();
+		addGhosts();
+		addPointsAndPowerUps();
 		
 		
 		scoreDisplay = new DashboardTextView(this);
@@ -82,6 +69,26 @@ public class PacmanApplication extends GameEngine implements IAlarm
 		
 		resetting = false;
 		
+	}
+
+	private void addPointsAndPowerUps() {
+		pointController = new PointController(this);
+		pointController.placeNormalPoints();
+		pointController.placePowerUps();
+	}
+
+	private void addGhosts() {
+		redEnemy = new RedEnemy(pacman, 280, 260);
+		addGameObject(redEnemy, redEnemy.getXcor(), redEnemy.getYcor());
+		
+		orangeEnemy = new OrangeEnemy(pacman, 300, 260);
+		addGameObject(orangeEnemy, orangeEnemy.getXcor(), orangeEnemy.getYcor());
+		
+		greenEnemy = new GreenEnemy(pacman, 280, 280);
+		addGameObject(greenEnemy, greenEnemy.getXcor(), greenEnemy.getYcor());
+		
+		blueEnemy = new BlueEnemy(pacman, 300, 280);
+		addGameObject(blueEnemy, blueEnemy.getXcor(), blueEnemy.getYcor());
 	}
 	
 	private void createDashboard(final DashboardTextView textView, int xCor, int yCor) 
@@ -119,7 +126,6 @@ public class PacmanApplication extends GameEngine implements IAlarm
 		gameTiles = new GameTiles(tileImagesNames, tileMap, 20);
 		GameTiles myTiles = new GameTiles(tileImagesNames, tileMap, 20);
 		setTileMap(myTiles);
-		Log.d("pacman", "GameTiles created");
 	}
 
 
@@ -157,15 +163,26 @@ public class PacmanApplication extends GameEngine implements IAlarm
 	{
 		for (GameObject gameObject : normalPoints)
 		{
-			this.deleteGameObject(gameObject);
+			deleteGameObject(gameObject);
+		}
+		if (!specialPoints.isEmpty())
+		{
+			for (GameObject gameObject : specialPoints)
+			{
+				deleteGameObject(gameObject);
+			}
 		}
 		deleteGameObject(pacman);
+		items.remove(pacman);
+		this.pacman = null;
 		deleteGameObject(redEnemy);
 		deleteGameObject(blueEnemy);
 		deleteGameObject(greenEnemy);
 		deleteGameObject(orangeEnemy);
 		
-		this.initialize();
+		addPacman(100, 260);
+		addGhosts();
+		addPointsAndPowerUps();
 		
 	}
 	
@@ -212,6 +229,10 @@ public class PacmanApplication extends GameEngine implements IAlarm
 	public void setOnNormalPointList(NormalPoint point)
 	{
 		normalPoints.add(point);
+	}
+	
+	public void setOnSpecialpointlist(SpecialPoint point) {
+		specialPoints.add(point);
 	}
 
 }

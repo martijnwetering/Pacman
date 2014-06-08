@@ -12,7 +12,7 @@ import java.util.Vector;
 import android.util.Log;
 import game.utilities.*;
 
-public class PointController 
+public class PointController implements IAlarm
 {
 	final static int SPECIALPOINTONE = 1;
 	final static int SPECIALPOINTTWO = 2;
@@ -61,12 +61,6 @@ public class PointController
 						app.setOnNormalPointList(normalPoint);
 						app.addGameObject(normalPoint, xCor, yCor);
 					}
-					/*if (tileType == 12)
-					{
-						Log.d("PowerUps", "placing powerUps");
-						PowerUp powerUp = new PowerUp(app);
-						app.addGameObject(powerUp, xCor, yCor);				
-					}*/
 				}
 			}
 		}
@@ -92,6 +86,18 @@ public class PointController
 			int yCor = point.getYCor();
 			
 			app.addGameObject(specialPoint, xCor, yCor);
+			app.setOnSpecialpointlist(specialPoint);
+			
+			if (alarm == null)
+			{
+				alarm = new Alarm(2, specialPoint.getMaxAge(), this);
+				alarm.startAlarm();
+			}
+			else 
+			{
+				alarm.setTime(specialPoint.getMaxAge());
+				alarm.restartAlarm();
+			}
 			
 			if (kindOfSpecialPoint == SPECIALPOINTONE) firstSpecialPointPlaced = 1;
 			if (kindOfSpecialPoint == SPECIALPOINTTWO) secondSpecialPointPlaced = 1;
@@ -113,11 +119,8 @@ public class PointController
 					int yCor = tile.getTileY();
 					int tileType = tile.getTileType();
 					
-					Log.d("tileType", Integer.toString(tileType));				
-				    
-					if (tileType == 12)
+					if (tileType == 15)
 					{
-						Log.d("PowerUps", "placing powerUps");
 						PowerUp powerUp = new PowerUp(app);
 						app.addGameObject(powerUp, xCor, yCor);				
 					}
@@ -174,6 +177,16 @@ public class PointController
 		}
 	}
 	
+	@Override
+	public void triggerAlarm(int alarmID) {
+		removeSpecialPoint();
+		
+	}
+	
+	private void removeSpecialPoint() {
+		app.deleteAllGameObjectsOfType(SpecialPoint.class);
+	}
+
 	// Return the number of normal points the player needs to acquire 
 	// to win.
 	public int getNumberOfNormalPoints()
