@@ -1,17 +1,19 @@
-package game;
+package game.creatures;
+
+import game.PacmanApplication;
+import game.creatures.Creature.Direction;
 
 import java.util.List;
 import java.util.Random;
 
 import android.gameengine.icadroids.objects.collisions.TileCollision;
 
-public class OrangeEnemy extends Enemy 
+public class BlueEnemy extends Enemy 
 {
-
-	public OrangeEnemy(Pacman pacman, PacmanApplication app, int xCor, int yCor, int numberOfDotsToActivate) 
+	public BlueEnemy(Pacman pacman, PacmanApplication app, int xCor, int yCor, int numberOfDotsToActivate) 
 	{
 		super(pacman, app, xCor, yCor, numberOfDotsToActivate);
-		setSprite("orange_strip3", 3);
+		setSprite("blue_strip3", 3);
 		setFrameNumber(0);
 	}
 
@@ -69,7 +71,7 @@ public class OrangeEnemy extends Enemy
 	
 	@Override
 	public void setDefaultSprite() {
-		setSprite("orange_strip3", 3);
+		setSprite("blue_strip3", 3);
 	}
 
 }

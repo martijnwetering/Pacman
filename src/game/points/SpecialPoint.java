@@ -1,4 +1,6 @@
-package game;
+package game.points;
+
+import game.PacmanApplication;
 
 public class SpecialPoint extends BasePoint 
 {

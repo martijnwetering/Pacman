@@ -1,5 +1,9 @@
-package game;
+package game.creatures;
 
+import game.PacmanApplication;
+import game.points.NormalPoint;
+import game.points.PowerUp;
+import game.points.SpecialPoint;
 import game.utilities.Position;
 
 import java.util.ArrayList;
@@ -85,9 +89,9 @@ public class Pacman extends Creature implements ICollision, IAlarm
 						enemy.jumpToStartPosition();
 						enemy.setDirection(Direction.UP.getValue());
 					}
-					else if (lives > 0 && !app.resetting)
+					else if (lives > 0 && !app.getIsResetting())
 					{
-						app.resetting = true;
+						app.setIsResetting(true);
 						lives--;
 						dotsEatenOnTurn = 0;
 						app.freezeMap();

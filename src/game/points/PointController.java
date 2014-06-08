@@ -1,4 +1,4 @@
-package game;
+package game.points;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -10,6 +10,7 @@ import android.gameengine.icadroids.tiles.Tile;
 import android.graphics.Rect;
 import java.util.Vector;
 import android.util.Log;
+import game.PacmanApplication;
 import game.utilities.*;
 
 public class PointController implements IAlarm

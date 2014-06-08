@@ -1,6 +1,7 @@
-package game;
+package game.creatures;
 
-import game.Creature.Direction;
+import game.PacmanApplication;
+import game.creatures.Creature.Direction;
 import game.utilities.Position;
 
 import java.util.ArrayList;

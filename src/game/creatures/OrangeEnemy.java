@@ -1,17 +1,19 @@
-package game;
+package game.creatures;
+
+import game.PacmanApplication;
 
 import java.util.List;
 import java.util.Random;
 
 import android.gameengine.icadroids.objects.collisions.TileCollision;
 
-public class GreenEnemy extends Enemy 
+public class OrangeEnemy extends Enemy 
 {
 
-	public GreenEnemy(Pacman pacman, PacmanApplication app, int xCor, int yCor, int numberOfDotsToActivate) 
+	public OrangeEnemy(Pacman pacman, PacmanApplication app, int xCor, int yCor, int numberOfDotsToActivate) 
 	{
 		super(pacman, app, xCor, yCor, numberOfDotsToActivate);
-		setSprite("green_strip3", 3);
+		setSprite("orange_strip3", 3);
 		setFrameNumber(0);
 	}
 
@@ -24,37 +26,24 @@ public class GreenEnemy extends Enemy
 			int tileType = tc.theTile.getTileType();
 			
 			boolean isWall = false;
-			boolean invisibleWall = false;
 			// 11 and 12 are the only tiles that are not walls.
 			for (int i = 0; i < 11; i++)
 			{
 				if (tileType == i) isWall = true;
 			}
-			if (tileType == 14) 
-			{
-				invisibleWall = true;
-			}
 			
-			// Gate.
 			if (tileType == 13 && tc.collisionSide == 0)
 			{
-				int direction = Direction.RIGHT.getValue();
-				currentDirection = direction;
 				moveUpToTileSide(tc);
-				setDirection(direction);
+				setDirection(Direction.RIGHT.getValue());
+				return;
 			}
 			
-			else if (isWall)
+			if (isWall)
 			{
-				int direction = randomDirection();
-				currentDirection = direction;
 				moveUpToTileSide(tc);
-				setDirection(direction);
-			}
-			else if (invisibleWall)
-			{
-				int direction = randomDirection();
-				setDirectionSpeed(direction, speed);
+				setDirection(randomDirection());
+				return;
 			}
 		}
 	}
@@ -74,31 +63,15 @@ public class GreenEnemy extends Enemy
 	private int randomDirection()
 	{
 		int[] directions = {0, 90, 180, 270};
+		Random randomNumberGenerator = new Random();
 		int randomDirection = randomNumberGenerator.nextInt(4);
 		
 		return directions[randomDirection];
 	}
 	
-	private int randomLeftOrRight()
-	{
-		int[] directions = {90, 270};
-		int randomDirection = randomNumberGenerator.nextInt(2);
-		
-		return directions[randomDirection];
-	}
-	
-	private int randomUpOrDown()
-	{
-		int[] directions = {0, 180};
-		int randomDirection = randomNumberGenerator.nextInt(2);
-		
-		return directions[randomDirection];
-	}
-
 	@Override
 	public void setDefaultSprite() {
-		setSprite("green_strip3", 3);
+		setSprite("orange_strip3", 3);
 	}
 
 }
-

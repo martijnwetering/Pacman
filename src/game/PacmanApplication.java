@@ -1,6 +1,16 @@
 package game;
 
-import game.Creature.Direction;
+import game.creatures.BlueEnemy;
+import game.creatures.Enemy;
+import game.creatures.GreenEnemy;
+import game.creatures.OrangeEnemy;
+import game.creatures.Pacman;
+import game.creatures.RedEnemy;
+import game.creatures.Creature.Direction;
+import game.points.NormalPoint;
+import game.points.PointController;
+import game.points.SpecialPoint;
+import game.utilities.LevelGenerator;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -28,7 +38,7 @@ public class PacmanApplication extends GameEngine implements IAlarm
 	private GameTiles gameTiles;
 	private Enemy redEnemy, orangeEnemy, greenEnemy, blueEnemy;
 	private Alarm alarm;
-	protected boolean resetting;
+	private boolean resetting;
 	
 	private PointController pointController;
 	private ArrayList<NormalPoint> normalPoints;
@@ -79,16 +89,16 @@ public class PacmanApplication extends GameEngine implements IAlarm
 
 	private void addGhosts() {
 		redEnemy = new RedEnemy(pacman, this, 280, 260, 0);
-		addGameObject(redEnemy, redEnemy.getXcor(), redEnemy.getYcor());
+		addGameObject(redEnemy, redEnemy.getXcor(), redEnemy.getYcor(), 20);
 		
 		orangeEnemy = new OrangeEnemy(pacman, this, 300, 260, 5);
-		addGameObject(orangeEnemy, orangeEnemy.getXcor(), orangeEnemy.getYcor());
+		addGameObject(orangeEnemy, orangeEnemy.getXcor(), orangeEnemy.getYcor(), 20);
 		
 		greenEnemy = new GreenEnemy(pacman, this, 280, 280, 10);
-		addGameObject(greenEnemy, greenEnemy.getXcor(), greenEnemy.getYcor());
+		addGameObject(greenEnemy, greenEnemy.getXcor(), greenEnemy.getYcor(), 20);
 		
 		blueEnemy = new BlueEnemy(pacman, this, 300, 280, 12);
-		addGameObject(blueEnemy, blueEnemy.getXcor(), blueEnemy.getYcor());
+		addGameObject(blueEnemy, blueEnemy.getXcor(), blueEnemy.getYcor(), 20);
 	}
 	
 	private void createDashboard(final DashboardTextView textView, int xCor, int yCor) 
@@ -233,6 +243,16 @@ public class PacmanApplication extends GameEngine implements IAlarm
 	
 	public void setOnSpecialpointlist(SpecialPoint point) {
 		specialPoints.add(point);
+	}
+	
+	public boolean getIsResetting()
+	{
+		return resetting;
+	}
+	
+	public void setIsResetting(boolean value)
+	{
+		resetting = value;
 	}
 
 }

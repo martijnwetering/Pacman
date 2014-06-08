@@ -1,4 +1,6 @@
-package game;
+package game.creatures;
+
+import game.PacmanApplication;
 
 import java.util.List;
 
