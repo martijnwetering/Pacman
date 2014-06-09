@@ -1,6 +1,7 @@
-package game;
+package game.creatures;
 
-import game.Creature.Direction;
+import game.PacmanApplication;
+import game.creatures.Creature.Direction;
 
 import java.util.List;
 import java.util.Random;
@@ -10,12 +11,11 @@ import android.gameengine.icadroids.objects.collisions.TileCollision;
 public class RedEnemy extends Enemy 
 {
 
-	public RedEnemy(Pacman pacman, int xCor, int yCor) 
+	public RedEnemy(Pacman pacman, PacmanApplication app, int xCor, int yCor, int numberOfDotsToActivate) 
 	{
-		super(pacman, xCor, yCor);
+		super(pacman, app, xCor, yCor, numberOfDotsToActivate);
 		setSprite("red_strip3", 3);
 		setFrameNumber(0);
-		setDirectionSpeed(Direction.UP.getValue(), speed);
 	}
 
 	@Override
@@ -124,6 +124,11 @@ public class RedEnemy extends Enemy
 		int randomDirection = randomNumberGenerator.nextInt(4);
 		
 		return directions[randomDirection];
+	}
+	
+	@Override
+	public void setDefaultSprite() {
+		setSprite("red_strip3", 3);
 	}
 
 }

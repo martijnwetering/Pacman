@@ -1,13 +1,22 @@
 package game;
 
-import game.Creature.Direction;
+import game.creatures.BlueEnemy;
+import game.creatures.Enemy;
+import game.creatures.GreenEnemy;
+import game.creatures.OrangeEnemy;
+import game.creatures.Pacman;
+import game.creatures.RedEnemy;
+import game.creatures.Creature.Direction;
+import game.points.NormalPoint;
+import game.points.PointController;
+import game.points.SpecialPoint;
+import game.utilities.LevelGenerator;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 
 import java.util.Vector;
 
-import android.gameengine.icadroids.dashboard.DashboardImageView;
 import android.gameengine.icadroids.alarms.Alarm;
 import android.gameengine.icadroids.alarms.IAlarm;
 import android.gameengine.icadroids.dashboard.DashboardTextView;
@@ -26,26 +35,23 @@ public class PacmanApplication extends GameEngine implements IAlarm
 {
 	private Pacman pacman;
 	private DashboardTextView scoreDisplay;
-	//private DashboardTextView Display;
-	//private DashboardImageView DisplayImage; 
 	private GameTiles gameTiles;
-	private PointController pointController;
 	private Enemy redEnemy, orangeEnemy, greenEnemy, blueEnemy;
 	private Alarm alarm;
-	protected boolean resetting;
-	private ArrayList<NormalPoint> normalPoints; 
+	private boolean resetting;
+	
+	private PointController pointController;
+	private ArrayList<NormalPoint> normalPoints;
+	private ArrayList<SpecialPoint> specialPoints;
 	
 	private LevelGenerator generator;
 	private int[][] tileMap;
 	private int level;
-	//private boolean start = true;
-	
 	 
 
 
 	@Override
 	protected void initialize() {
-		System.out.println("running pacman");
 
 		TouchInput.use = false;
 		MotionSensor.use = false;
@@ -54,72 +60,51 @@ public class PacmanApplication extends GameEngine implements IAlarm
 		level = 1;
 		generator = new LevelGenerator();
 		
-		
-		
 		createTileEnvironment();
 		
 		normalPoints = new ArrayList<NormalPoint>();
+		specialPoints = new ArrayList<SpecialPoint>();
 		
-		addPacman(40, 60);
-		/*
-		redEnemy = new RedEnemy(pacman, 280, 260);
-		addGameObject(redEnemy, redEnemy.getXcor(), redEnemy.getYcor());
-		
-		orangeEnemy = new OrangeEnemy(pacman, 300, 260);
-		addGameObject(orangeEnemy, orangeEnemy.getXcor(), orangeEnemy.getYcor());
-		
-		greenEnemy = new GreenEnemy(pacman, 280, 280);
-		addGameObject(greenEnemy, greenEnemy.getXcor(), greenEnemy.getYcor());
-		*/
-		blueEnemy = new BlueEnemy(pacman, 300, 280);
-		addGameObject(blueEnemy, blueEnemy.getXcor(), blueEnemy.getYcor());
-		
-		
-		pointController = new PointController(this);
-		pointController.placeNormalPoints();
-		pointController.placePowerUps();
-		
-		/*DisplayImage = new DashboardImageView(this, "pacman2");
-		addToDashboard(DisplayImage);*/
-		//addToDashboard(Display);
-		
-		//Display = new DashboardTextView(this);		
-		
-		
-		//addToDashboard(Display);
+		addPacman(100, 260);
+		addGhosts();
+		addPointsAndPowerUps();
 		
 		
 		scoreDisplay = new DashboardTextView(this);
 		scoreDisplay.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 24);
 		scoreDisplay.setTextColor(Color.BLACK);
 		addToDashboard(scoreDisplay);
-
+		
 		createDashboard(scoreDisplay, 590, 5);
+		
 		resetting = false;
+		
+	}
+
+	private void addPointsAndPowerUps() {
+		pointController = new PointController(this);
+		pointController.placeNormalPoints();
+		pointController.placePowerUps();
+	}
+
+	private void addGhosts() {
+		redEnemy = new RedEnemy(pacman, this, 280, 260, 0);
+		addGameObject(redEnemy, redEnemy.getXcor(), redEnemy.getYcor(), 20);
+		
+		orangeEnemy = new OrangeEnemy(pacman, this, 300, 260, 5);
+		addGameObject(orangeEnemy, orangeEnemy.getXcor(), orangeEnemy.getYcor(), 20);
+		
+		greenEnemy = new GreenEnemy(pacman, this, 280, 280, 10);
+		addGameObject(greenEnemy, greenEnemy.getXcor(), greenEnemy.getYcor(), 20);
+		
+		blueEnemy = new BlueEnemy(pacman, this, 300, 280, 12);
+		addGameObject(blueEnemy, blueEnemy.getXcor(), blueEnemy.getYcor(), 20);
 	}
 	
 	private void createDashboard(final DashboardTextView textView, int xCor, int yCor) 
 	{
-		/*if(!start){
-		addToDashboard(DisplayImage);
-		addToDashboard(Display);
-		this.DisplayImage.setWidgetX(-115);
-		this.DisplayImage.setWidgetY(0);
-		this.DisplayImage.setWidgetWidth(1240);
-		this.DisplayImage.setWidgetHeight(600);
-		//this.DisplayImage.setBackgroundColor(Color.WHITE);
-		if (OnScreenButtons.start)
-		{
-			System.out.println("start!!!!!!!!!");
-			//buttonPressed = true;
-			start = true;
-		}
-		}
-		if(start){*/
-			//System.out.println("start!!!!!!!!!");
-			//addToDashboard(Display);
+
 		// this.scoreDisplay.setWidgetWidth(20);
-	    //OnScreenButtons.use = true;
 		textView.setWidgetHeight(60);
 		textView.setWidgetBackgroundColor(Color.WHITE);
 		textView.setWidgetX(xCor);
@@ -132,8 +117,7 @@ public class PacmanApplication extends GameEngine implements IAlarm
 				textView.setPadding(10, 10, 10, 10);
 			}
 		});
-		}
-	
+	}
 	
 	private void addPacman(int x, int y)
 	{
@@ -152,7 +136,6 @@ public class PacmanApplication extends GameEngine implements IAlarm
 		gameTiles = new GameTiles(tileImagesNames, tileMap, 20);
 		GameTiles myTiles = new GameTiles(tileImagesNames, tileMap, 20);
 		setTileMap(myTiles);
-		Log.d("pacman", "GameTiles created");
 	}
 
 
@@ -166,16 +149,12 @@ public class PacmanApplication extends GameEngine implements IAlarm
 	public void update() {
 		super.update();
 		
-		Enemy.bepaalStatusEnemey();
 		int goalDotsEaten = pointController.getNumberOfNormalPoints();
 		int actualDotsEaten = pacman.getDotsEaten();
 		if (goalDotsEaten == actualDotsEaten)
 		{
 			endGame();
 		}
-
-		this.scoreDisplay.setTextString(
-				"Score: " + String.valueOf(this.pacman.getScore()));
 		if (actualDotsEaten == 10)
 		{
 			pointController.placeSpecialPoint(1);
@@ -194,15 +173,26 @@ public class PacmanApplication extends GameEngine implements IAlarm
 	{
 		for (GameObject gameObject : normalPoints)
 		{
-			this.deleteGameObject(gameObject);
+			deleteGameObject(gameObject);
+		}
+		if (!specialPoints.isEmpty())
+		{
+			for (GameObject gameObject : specialPoints)
+			{
+				deleteGameObject(gameObject);
+			}
 		}
 		deleteGameObject(pacman);
+		items.remove(pacman);
+		this.pacman = null;
 		deleteGameObject(redEnemy);
 		deleteGameObject(blueEnemy);
 		deleteGameObject(greenEnemy);
 		deleteGameObject(orangeEnemy);
 		
-		this.initialize();
+		addPacman(100, 260);
+		addGhosts();
+		addPointsAndPowerUps();
 		
 	}
 	
@@ -223,13 +213,13 @@ public class PacmanApplication extends GameEngine implements IAlarm
 		pacman.jumpToStartPosition();
 		pacman.setDirection(Direction.RIGHT.getValue());
 		redEnemy.jumpToStartPosition();
-		redEnemy.setDirectionSpeed(Direction.UP.getValue(), 4);
+		redEnemy.setDirection(Direction.UP.getValue());
 		greenEnemy.jumpToStartPosition();
-		greenEnemy.setDirectionSpeed(Direction.UP.getValue(), 4);
+		greenEnemy.setDirection(Direction.UP.getValue());
 		blueEnemy.jumpToStartPosition();
-		blueEnemy.setDirectionSpeed(Direction.UP.getValue(), 4);
+		blueEnemy.setDirection(Direction.UP.getValue());
 		orangeEnemy.jumpToStartPosition();
-		orangeEnemy.setDirectionSpeed(Direction.UP.getValue(), 4);
+		orangeEnemy.setDirection(Direction.UP.getValue());
 		
 		resetting = false;
 		
@@ -249,6 +239,20 @@ public class PacmanApplication extends GameEngine implements IAlarm
 	public void setOnNormalPointList(NormalPoint point)
 	{
 		normalPoints.add(point);
+	}
+	
+	public void setOnSpecialpointlist(SpecialPoint point) {
+		specialPoints.add(point);
+	}
+	
+	public boolean getIsResetting()
+	{
+		return resetting;
+	}
+	
+	public void setIsResetting(boolean value)
+	{
+		resetting = value;
 	}
 
 }

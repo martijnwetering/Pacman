@@ -1,5 +1,6 @@
-package game;
+package game.points;
 
+import game.PacmanApplication;
 import android.gameengine.icadroids.objects.GameObject;
 
 public abstract class BasePoint extends GameObject 

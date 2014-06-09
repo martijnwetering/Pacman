@@ -1,5 +1,9 @@
-package game;
+package game.creatures;
 
+import game.PacmanApplication;
+import game.points.NormalPoint;
+import game.points.PowerUp;
+import game.points.SpecialPoint;
 import game.utilities.Position;
 
 import java.util.ArrayList;
@@ -21,32 +25,31 @@ import android.util.Log;
 
 public class Pacman extends Creature implements ICollision, IAlarm 
 {
-	private PacmanApplication app;
-	private int speed, currentDirection, previousDirection, score, dotsEaten, lives;
-	private double currentX, currentY;
+	private int speed, currentDirection, previousDirection, score, dotsEaten, dotsEatenOnTurn, lives;
 	private boolean playerAction;
 	private Alarm myAlarm;
 	private Position position;
 	private boolean hunter;
 
-	 
 	public Pacman(PacmanApplication app, int speed, int xCor, int yCor) 
 	{
+		super(app);
+		
 		this.app = app;
 		this.speed = speed;
 		
 		position = new Position(xCor, yCor);
-		myAlarm = new Alarm(2, 400, this); // houdt bij hoe lang pacman in de hunter mode is.
-		//myAlarm.startAlarm();
+		myAlarm = new Alarm(2, 300, this);
 		
 		setSprite("pacman_right_strip4", 4);
 		setDirection(90);
 		currentDirection = 90;
 		dotsEaten = 0;
-		score = -10;
+		score = 0;
 		playerAction = false;
 		lives = 3;
 		hunter = false;
+		dotsEatenOnTurn = 0;
 	}
 
 	@Override
@@ -70,11 +73,31 @@ public class Pacman extends Creature implements ICollision, IAlarm
 					score = score + ((NormalPoint) gameObject).getPoints();
 					app.deleteGameObject(gameObject);
 					dotsEaten++;
+					dotsEatenOnTurn++;
 				} 
 				if (gameObject instanceof SpecialPoint)
 				{
 					score = score + ((SpecialPoint) gameObject).getPoints();
 					app.deleteGameObject(gameObject);
+				}
+				if (gameObject instanceof Enemy)
+				{
+					if (hunter)
+					{
+						Enemy enemy = (Enemy)gameObject;
+						score = score + enemy.getPoints();
+					}
+					else if (lives > 0 && !app.getIsResetting())
+					{
+						app.setIsResetting(true);
+						lives--;
+						dotsEatenOnTurn = 0;
+						app.freezeMap();
+					}
+					else if (lives == 0)
+					{
+						app.restart();
+					}
 				}
 				if (gameObject instanceof PowerUp)
 				{
@@ -82,26 +105,6 @@ public class Pacman extends Creature implements ICollision, IAlarm
 					app.deleteGameObject(gameObject);
 					activateHunterMode();
 				}
-				if (gameObject instanceof Enemy)
-				{ 
-				  if(!hunter){
-					if (lives > 0 && !app.resetting)
-					{
-						app.resetting = true;
-						lives--;
-						app.freezeMap();
-					}
-					else if (lives == 0)
-					{
-						app.restart();
-					}
-				  }
-				  if(hunter){
-					  app.deleteGameObject(gameObject);
-					  Enemy.eaten = true;
-				  }
-				}
-				
 			}
 		}
 	}
@@ -178,12 +181,11 @@ public class Pacman extends Creature implements ICollision, IAlarm
 		counter++;
 	}
 	
+	// Handler for tile collisions.
 	@Override
 	public void collisionOccurred(List<TileCollision> collidedTiles) 
 	{
 		super.collisionOccurred(collidedTiles);
-		
-		double direction = getDirection();
 		
 		for (TileCollision tc : collidedTiles)
 		{
@@ -191,7 +193,9 @@ public class Pacman extends Creature implements ICollision, IAlarm
 			boolean movingUpOrDown = previousDirection == 0 || previousDirection == 180;
 			boolean movingRightOrLeft = previousDirection == 90 || previousDirection == 270;
 			
-			if (tc.theTile.getTileType() != 11 && tc.theTile.getTileType() != 12 && tc.theTile.getTileType() != 14)
+			// If pacman hits a wall 
+			if (tc.theTile.getTileType() != 11 && tc.theTile.getTileType() != 14
+					&& tc.theTile.getTileType() != 15)
 			{
 				
 				moveUpToTileSide(tc);
@@ -218,24 +222,21 @@ public class Pacman extends Creature implements ICollision, IAlarm
 					setSpeed(0);
 				}
 			}
-			
-			playerAction = false;
-		}			
+		}
+		playerAction = false;
 	}
 	
 	private void activateHunterMode()
 	{
 		myAlarm.restartAlarm();
 		hunter = true;
-		System.out.println("hunter = true");
 	}
 	
-	public void triggerAlarm(int id) { // Pacman wordt slachtoffer
-		Log.d("Pacman", "Alarm gaat af");
+	public void triggerAlarm(int id) 
+	{ 
 		hunter = false;
 		myAlarm.pauseAlarm();
-		System.out.println("hunter = false");
-	    }
+	}
 	
 	public int getScore()
 	{
@@ -259,10 +260,12 @@ public class Pacman extends Creature implements ICollision, IAlarm
 		return position.getYCor();
 	}
 	
-	public boolean getHunter()
-	{
+	public boolean isHunter() {
 		return hunter;
 	}
 	
+	public int getDotsEatenOnTurn() {
+		return dotsEatenOnTurn;
+	}
 	
 }

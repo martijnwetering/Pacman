@@ -1,4 +1,4 @@
-package game;
+package game.points;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -10,9 +10,10 @@ import android.gameengine.icadroids.tiles.Tile;
 import android.graphics.Rect;
 import java.util.Vector;
 import android.util.Log;
+import game.PacmanApplication;
 import game.utilities.*;
 
-public class PointController 
+public class PointController implements IAlarm
 {
 	final static int SPECIALPOINTONE = 1;
 	final static int SPECIALPOINTTWO = 2;
@@ -54,19 +55,13 @@ public class PointController
 					
 					Log.d("tileType", Integer.toString(tileType));				
 				
-					if (tileType == 11 || tileType == 15)
+					if (tileType == 11 || tileType == 14)
 					{
 						numberOfNormalPoints++;
 						NormalPoint normalPoint = new NormalPoint(app);
 						app.setOnNormalPointList(normalPoint);
 						app.addGameObject(normalPoint, xCor, yCor);
 					}
-					/*if (tileType == 12)
-					{
-						Log.d("PowerUps", "placing powerUps");
-						PowerUp powerUp = new PowerUp(app);
-						app.addGameObject(powerUp, xCor, yCor);				
-					}*/
 				}
 			}
 		}
@@ -92,6 +87,18 @@ public class PointController
 			int yCor = point.getYCor();
 			
 			app.addGameObject(specialPoint, xCor, yCor);
+			app.setOnSpecialpointlist(specialPoint);
+			
+			if (alarm == null)
+			{
+				alarm = new Alarm(2, specialPoint.getMaxAge(), this);
+				alarm.startAlarm();
+			}
+			else 
+			{
+				alarm.setTime(specialPoint.getMaxAge());
+				alarm.restartAlarm();
+			}
 			
 			if (kindOfSpecialPoint == SPECIALPOINTONE) firstSpecialPointPlaced = 1;
 			if (kindOfSpecialPoint == SPECIALPOINTTWO) secondSpecialPointPlaced = 1;
@@ -113,11 +120,8 @@ public class PointController
 					int yCor = tile.getTileY();
 					int tileType = tile.getTileType();
 					
-					Log.d("tileType", Integer.toString(tileType));				
-				    
-					if (tileType == 12)
+					if (tileType == 15)
 					{
-						Log.d("PowerUps", "placing powerUps");
 						PowerUp powerUp = new PowerUp(app);
 						app.addGameObject(powerUp, xCor, yCor);				
 					}
@@ -147,7 +151,7 @@ public class PointController
 					int tileY = tile.getTileY();
 					int tileType = tile.getTileType();
 					
-					if (tileType != 11 || tileType != 15)
+					if (tileType != 11 || tileType != 12)
 					{ 
 						if (xCor == tileX && yCor == tileY)
 						{
@@ -174,6 +178,16 @@ public class PointController
 		}
 	}
 	
+	@Override
+	public void triggerAlarm(int alarmID) {
+		removeSpecialPoint();
+		
+	}
+	
+	private void removeSpecialPoint() {
+		app.deleteAllGameObjectsOfType(SpecialPoint.class);
+	}
+
 	// Return the number of normal points the player needs to acquire 
 	// to win.
 	public int getNumberOfNormalPoints()
