@@ -73,30 +73,6 @@ public class GreenEnemy extends Enemy
 		move(collidedTiles);
 	}
 	
-	private int randomDirection()
-	{
-		int[] directions = {0, 90, 180, 270};
-		int randomDirection = randomNumberGenerator.nextInt(4);
-		
-		return directions[randomDirection];
-	}
-	
-	private int randomLeftOrRight()
-	{
-		int[] directions = {90, 270};
-		int randomDirection = randomNumberGenerator.nextInt(2);
-		
-		return directions[randomDirection];
-	}
-	
-	private int randomUpOrDown()
-	{
-		int[] directions = {0, 180};
-		int randomDirection = randomNumberGenerator.nextInt(2);
-		
-		return directions[randomDirection];
-	}
-
 	@Override
 	public void setDefaultSprite() {
 		setSprite("green_strip3", 3);

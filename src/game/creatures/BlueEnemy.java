@@ -60,15 +60,6 @@ public class BlueEnemy extends Enemy
 		move(collidedTiles);
 	}
 	
-	private int randomDirection()
-	{
-		int[] directions = {0, 90, 180, 270};
-		Random randomNumberGenerator = new Random();
-		int randomDirection = randomNumberGenerator.nextInt(4);
-		
-		return directions[randomDirection];
-	}
-	
 	@Override
 	public void setDefaultSprite() {
 		setSprite("blue_strip3", 3);

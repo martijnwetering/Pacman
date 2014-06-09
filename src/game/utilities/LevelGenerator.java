@@ -2,7 +2,7 @@ package game.utilities;
 
 public class LevelGenerator{
 
-	private int[][] tilemap1;
+	/*private int[][] tilemap1;
 	private int[][] tilemap2;
 	private String[] tileImagesNames;
 	 	
@@ -10,20 +10,21 @@ public class LevelGenerator{
 		tilemap1 = createLevel1();
 		tilemap2 = createLevel2();
 		tileImagesNames = createImagesNames();
+	}*/
+	
+	public static String[] createImagesNames()
+	{
+		String[] tileImagesNames = { "cornertopleft", "cornertopright", "cornerbottomleft", 
+				"cornerbottomright", "vertical", "horizontal", "internleft", 
+				"internright", "interntop", "internbottom", "wall_tile", 
+				"background_tile", "no_gameobject", "gate", "invisible_wall",
+				"power_up_tile"};
+    
+		return tileImagesNames;
 	}
 	
-	private String[] createImagesNames(){
 	
-	String[] tileImagesNames = { "cornertopleft", "cornertopright", "cornerbottomleft", 
-			"cornerbottomright", "vertical", "horizontal", "internleft", 
-			"internright", "interntop", "internbottom", "wall_tile", 
-			"background_tile", "no_gameobject", "gate", "invisible_wall",
-			"power_up_tile"};
-    return tileImagesNames;
-	}
-	
-	
-	private int[][] createLevel1() 
+	public static int[][] createLevel1() 
 	{	
 		int [][] tilemap = new int[][] {
 				{10,10,10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,10, 10 },
@@ -58,7 +59,7 @@ public class LevelGenerator{
 	}
 	
 
-	private int[][] createLevel2() 
+	public static int[][] createLevel2() 
 	{	
 		int[][] tilemap = 
 		{
@@ -91,22 +92,7 @@ public class LevelGenerator{
 		{10,10,10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,10, 10 },
 		};
 		return tilemap;
-}
-	
-	
-
-	public int[][] getTilemap1() {
-		return tilemap1;
-	}
-	
-	public int[][] getTilemap2() {
-		return tilemap2;
-	}
-
-	public String[] getTileImagesNames() {
-		return tileImagesNames;
-	}
-	
+	}	
 }
 	
 

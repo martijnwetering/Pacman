@@ -105,6 +105,31 @@ public abstract class Enemy extends Creature
 		}
 	}
 	
+	protected int randomDirection()
+	{
+		int[] directions = {0, 90, 180, 270};
+		Random randomNumberGenerator = new Random();
+		int randomDirection = randomNumberGenerator.nextInt(4);
+		
+		return directions[randomDirection];
+	}
+	
+	protected int randomLeftOrRight()
+	{
+		int[] directions = {90, 270};
+		int randomDirection = randomNumberGenerator.nextInt(2);
+		
+		return directions[randomDirection];
+	}
+	
+	protected int randomUpOrDown()
+	{
+		int[] directions = {0, 180};
+		int randomDirection = randomNumberGenerator.nextInt(2);
+		
+		return directions[randomDirection];
+	}
+	
 	public int getPoints()
 	{
 		return points;
