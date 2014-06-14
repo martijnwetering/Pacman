@@ -1,14 +1,22 @@
 package game.points;
 
 import game.PacmanApplication;
+import android.gameengine.icadroids.objects.GameObject;
 
-public class PowerUp extends BasePoint  
-{	 
+public class PowerUp extends GameObject implements IPoint  
+{
+	private int points;
 	
-	public PowerUp(PacmanApplication app) 
+	public PowerUp(int points) 
 	{
-		super(app, 25);
+		this.points = points;
 		setSprite("power_up");
+	}
+
+	@Override
+	public int getPoints() 
+	{
+		return points;
 	}
 }
 

@@ -10,9 +10,10 @@ import android.gameengine.icadroids.objects.collisions.TileCollision;
 public class OrangeEnemy extends Enemy 
 {
 
-	public OrangeEnemy(Pacman pacman, PacmanApplication app, int xCor, int yCor, int numberOfDotsToActivate) 
+	public OrangeEnemy(Pacman pacman, PacmanApplication app, int xCor, int yCor, 
+			int numberOfDotsToActivate, int speed, int points) 
 	{
-		super(pacman, app, xCor, yCor, numberOfDotsToActivate);
+		super(pacman, app, xCor, yCor, numberOfDotsToActivate, speed, points);
 		setSprite("orange_strip3", 3);
 		setFrameNumber(0);
 	}
@@ -46,12 +47,6 @@ public class OrangeEnemy extends Enemy
 				return;
 			}
 		}
-	}
-	
-	@Override
-	public void update()
-	{
-		super.update();
 	}
 	
 	@Override

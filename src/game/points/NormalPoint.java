@@ -1,13 +1,21 @@
 package game.points;
 
+import android.gameengine.icadroids.objects.GameObject;
 import game.PacmanApplication;
 
-public class NormalPoint extends BasePoint 
+public class NormalPoint extends GameObject implements IPoint
 {
-	public NormalPoint(PacmanApplication app) 
+	private int points;
+	
+	public NormalPoint(int points) 
 	{
-		super(app, 10);
+		this.points = points;
 		setSprite("normal_point");
 	}
 
+	@Override
+	public int getPoints() 
+	{
+		return points;
+	}
 }

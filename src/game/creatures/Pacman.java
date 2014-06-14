@@ -5,6 +5,7 @@ import game.points.NormalPoint;
 import game.points.PowerUp;
 import game.points.SpecialPoint;
 import game.utilities.Position;
+import game.points.IPoint;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,20 +26,17 @@ import android.util.Log;
 
 public class Pacman extends Creature implements ICollision, IAlarm 
 {
-	private int speed, currentDirection, previousDirection, score, dotsEaten, dotsEatenOnTurn, lives;
+	private int currentDirection, previousDirection, score, dotsEaten, dotsEatenOnTurn, lives;
 	private boolean playerAction;
 	private Alarm myAlarm;
-	private Position position;
 	private boolean hunter;
 
-	public Pacman(PacmanApplication app, int speed, int xCor, int yCor) 
+	public Pacman(PacmanApplication app, int speed, int xCor, int yCor, int lives) 
 	{
-		super(app);
+		super(app, xCor, yCor, speed);
 		
 		this.app = app;
-		this.speed = speed;
-		
-		position = new Position(xCor, yCor);
+		this.lives = lives;
 		myAlarm = new Alarm(2, 300, this);
 		
 		setSprite("pacman_right_strip4", 4);
@@ -47,7 +45,6 @@ public class Pacman extends Creature implements ICollision, IAlarm
 		dotsEaten = 0;
 		score = 0;
 		playerAction = false;
-		lives = 3;
 		hunter = false;
 		dotsEatenOnTurn = 0;
 	}
@@ -68,26 +65,23 @@ public class Pacman extends Creature implements ICollision, IAlarm
 		{
 			for (GameObject gameObject : collided)
 			{
+				if (gameObject instanceof IPoint)
+				{
+					score = score + ((IPoint)gameObject).getPoints();
+				}
 				if (gameObject instanceof NormalPoint)
 				{
-					score = score + ((NormalPoint) gameObject).getPoints();
 					app.deleteGameObject(gameObject);
 					dotsEaten++;
 					dotsEatenOnTurn++;
 				} 
 				if (gameObject instanceof SpecialPoint)
 				{
-					score = score + ((SpecialPoint) gameObject).getPoints();
 					app.deleteGameObject(gameObject);
 				}
 				if (gameObject instanceof Enemy)
 				{
-					if (hunter)
-					{
-						Enemy enemy = (Enemy)gameObject;
-						score = score + enemy.getPoints();
-					}
-					else if (lives > 0 && !app.getIsResetting())
+					if (!hunter && lives > 0 && !app.getIsResetting())
 					{
 						app.setIsResetting(true);
 						lives--;
@@ -101,7 +95,6 @@ public class Pacman extends Creature implements ICollision, IAlarm
 				}
 				if (gameObject instanceof PowerUp)
 				{
-					score = score + ((PowerUp) gameObject).getPoints();
 					app.deleteGameObject(gameObject);
 					activateHunterMode();
 				}
@@ -252,14 +245,6 @@ public class Pacman extends Creature implements ICollision, IAlarm
 		return lives;
 	}
 
-	public int getXCor() {
-		return position.getXCor();
-	}
-	
-	public int getYCor() {
-		return position.getYCor();
-	}
-	
 	public boolean isHunter() {
 		return hunter;
 	}
