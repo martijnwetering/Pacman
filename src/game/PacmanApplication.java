@@ -1,5 +1,16 @@
 package game;
 
+/**
+ * Pacman
+ * This is a recreation of the original pacman for android devices.
+ * The player needs to collect all the white dots in other to advance
+ * a level. He can collect extra points by collecting fruits (red dots)
+ * or by eating ghosts after a power up. A power up gives the ability
+ * to eat ghosts for a limited amount of time.
+ * 
+ * @author Martijn van de Wetering, Koen Moret
+ */
+
 import game.creatures.BlueEnemy;
 import game.creatures.Enemy;
 import game.creatures.GreenEnemy;
@@ -44,7 +55,6 @@ public class PacmanApplication extends GameEngine implements IAlarm
 	private ArrayList<NormalPoint> normalPoints;
 	private ArrayList<SpecialPoint> specialPoints;
 	
-	private LevelGenerator generator;
 	private int[][] tileMap;
 	private int level;
 	 
@@ -58,7 +68,6 @@ public class PacmanApplication extends GameEngine implements IAlarm
 		OnScreenButtons.use = true;
 		
 		level = 1;
-		generator = new LevelGenerator();
 		
 		createTileEnvironment();
 		
@@ -88,14 +97,14 @@ public class PacmanApplication extends GameEngine implements IAlarm
 	}
 
 	private void addGhosts() {
-		redEnemy = new RedEnemy(pacman, this, 280, 260, 0);
-		addGameObject(redEnemy, redEnemy.getXcor(), redEnemy.getYcor(), 20);
+		//redEnemy = new RedEnemy(pacman, this, 280, 260, 0);
+		//addGameObject(redEnemy, redEnemy.getXcor(), redEnemy.getYcor(), 20);
 		
-		orangeEnemy = new OrangeEnemy(pacman, this, 300, 260, 5);
-		addGameObject(orangeEnemy, orangeEnemy.getXcor(), orangeEnemy.getYcor(), 20);
+		//orangeEnemy = new OrangeEnemy(pacman, this, 300, 260, 5);
+		//addGameObject(orangeEnemy, orangeEnemy.getXcor(), orangeEnemy.getYcor(), 20);
 		
-		greenEnemy = new GreenEnemy(pacman, this, 280, 280, 10);
-		addGameObject(greenEnemy, greenEnemy.getXcor(), greenEnemy.getYcor(), 20);
+		//greenEnemy = new GreenEnemy(pacman, this, 280, 280, 10);
+		//addGameObject(greenEnemy, greenEnemy.getXcor(), greenEnemy.getYcor(), 20);
 		
 		blueEnemy = new BlueEnemy(pacman, this, 300, 280, 12);
 		addGameObject(blueEnemy, blueEnemy.getXcor(), blueEnemy.getYcor(), 20);
@@ -130,9 +139,9 @@ public class PacmanApplication extends GameEngine implements IAlarm
 	 */
 	private void createTileEnvironment() 
 	{
-		String[] tileImagesNames = generator.getTileImagesNames();
-		if(level == 1){tileMap = generator.getTilemap1();}
-		if(level == 2){tileMap = generator.getTilemap2();}	
+		String[] tileImagesNames = LevelGenerator.createImagesNames();
+		if(level == 1){tileMap = LevelGenerator.createLevel1();}
+		if(level == 2){tileMap = LevelGenerator.createLevel2();}	
 		gameTiles = new GameTiles(tileImagesNames, tileMap, 20);
 		GameTiles myTiles = new GameTiles(tileImagesNames, tileMap, 20);
 		setTileMap(myTiles);
@@ -169,6 +178,11 @@ public class PacmanApplication extends GameEngine implements IAlarm
 				+ " | Lives: " + String.valueOf(pacman.getLives()));
 	}
 	
+	/**
+	 * Responsible for restarting the game. This happens when pacman lost al
+	 * of his lives. The method removes all game objects still in the game and
+	 * then recreates the world with new game objects.
+	 */
 	public void restart() 
 	{
 		for (GameObject gameObject : normalPoints)
@@ -196,6 +210,13 @@ public class PacmanApplication extends GameEngine implements IAlarm
 		
 	}
 	
+	/**
+	 * This method stops all movable game objects and sets an alarm. This happens
+	 * when pacman hits one of the ghosts. This is to put a pause between hitting a 
+	 * ghost and resetting the game field. 
+	 */
+	// TODO move the setspeed to the objects themselves after collision.
+	// TODO Pacman can still be controlled during the freeze, this shouldn't be allowed.
 	public void freezeMap()
 	{	
 		pacman.setSpeed(0);
@@ -208,6 +229,10 @@ public class PacmanApplication extends GameEngine implements IAlarm
 		alarm.startAlarm();
 	}
 	
+	/**
+	 * Responsible for resetting the game field. Al ghosts and pacman are set back
+	 * to there starting positions. The dots eaten and points will stay the same.
+	 */
 	private void resetMap()
 	{
 		pacman.jumpToStartPosition();
