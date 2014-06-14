@@ -25,20 +25,16 @@ import android.util.Log;
 
 public class Pacman extends Creature implements ICollision, IAlarm 
 {
-	private int speed, currentDirection, previousDirection, score, dotsEaten, dotsEatenOnTurn, lives;
+	private int currentDirection, previousDirection, score, dotsEaten, dotsEatenOnTurn, lives;
 	private boolean playerAction;
 	private Alarm myAlarm;
-	private Position position;
 	private boolean hunter;
 
 	public Pacman(PacmanApplication app, int speed, int xCor, int yCor) 
 	{
-		super(app);
+		super(app, xCor, yCor, speed);
 		
 		this.app = app;
-		this.speed = speed;
-		
-		position = new Position(xCor, yCor);
 		myAlarm = new Alarm(2, 300, this);
 		
 		setSprite("pacman_right_strip4", 4);
@@ -252,14 +248,6 @@ public class Pacman extends Creature implements ICollision, IAlarm
 		return lives;
 	}
 
-	public int getXCor() {
-		return position.getXCor();
-	}
-	
-	public int getYCor() {
-		return position.getYCor();
-	}
-	
 	public boolean isHunter() {
 		return hunter;
 	}

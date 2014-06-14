@@ -11,9 +11,9 @@ import android.gameengine.icadroids.objects.collisions.TileCollision;
 public class RedEnemy extends Enemy 
 {
 
-	public RedEnemy(Pacman pacman, PacmanApplication app, int xCor, int yCor, int numberOfDotsToActivate) 
+	public RedEnemy(Pacman pacman, PacmanApplication app, int xCor, int yCor, int numberOfDotsToActivate, int speed) 
 	{
-		super(pacman, app, xCor, yCor, numberOfDotsToActivate);
+		super(pacman, app, xCor, yCor, numberOfDotsToActivate, speed);
 		setSprite("red_strip3", 3);
 		setFrameNumber(0);
 	}
@@ -105,11 +105,6 @@ public class RedEnemy extends Enemy
 		}
 	}
 	
-	@Override
-	public void update()
-	{
-		super.update();
-	}
 	
 	@Override
 	public void collisionOccurred(List<TileCollision> collidedTiles) 

@@ -13,27 +13,24 @@ import android.gameengine.icadroids.objects.collisions.TileCollision;
 
 public abstract class Enemy extends Creature
 {	
-	private int points, numberOfDotsToActivate;
-	private Position position;
+	private int points;
 	
+	protected int numberOfDotsToActivate;
 	protected Pacman pacman;
-	protected int speed;
 	protected boolean collided, active;
 	protected Random randomNumberGenerator = new Random();
 	protected int currentDirection;
 	
 	
 
-	public Enemy(Pacman pacman, PacmanApplication app, int xCor, int yCor, int numberOfDotsToActivate) 
+	public Enemy(Pacman pacman, PacmanApplication app, int xCor, int yCor, int numberOfDotsToActivate, int speed) 
 	{
-		super(app);
+		super(app, xCor, yCor, speed);
 		
 		this.pacman = pacman;
 		this.numberOfDotsToActivate = numberOfDotsToActivate;
-		position = new Position(xCor, yCor);
 		points = 200;
 		setDirection(Direction.UP.getValue());
-		speed = 4;
 		collided = false;
 		active = false;
 		
@@ -41,16 +38,6 @@ public abstract class Enemy extends Creature
 	
 	public abstract void move(List<TileCollision> collidedTiles);
 	public abstract void setDefaultSprite();
-	
-	public int getXcor()
-	{
-		return position.getXCor();
-	}
-	
-	public int getYcor()
-	{
-		return position.getYCor();
-	}
 	
 	@Override
 	public void update()

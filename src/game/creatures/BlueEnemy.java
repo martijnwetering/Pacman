@@ -10,9 +10,9 @@ import android.gameengine.icadroids.objects.collisions.TileCollision;
 
 public class BlueEnemy extends Enemy 
 {
-	public BlueEnemy(Pacman pacman, PacmanApplication app, int xCor, int yCor, int numberOfDotsToActivate) 
+	public BlueEnemy(Pacman pacman, PacmanApplication app, int xCor, int yCor, int numberOfDotsToActivate, int speed) 
 	{
-		super(pacman, app, xCor, yCor, numberOfDotsToActivate);
+		super(pacman, app, xCor, yCor, numberOfDotsToActivate, speed);
 		setSprite("blue_strip3", 3);
 		setFrameNumber(0);
 	}
@@ -26,7 +26,7 @@ public class BlueEnemy extends Enemy
 			int tileType = tc.theTile.getTileType();
 			
 			boolean isWall = false;
-			// 11 and 12 are the only tiles that are not walls.
+			// 0 until 10 tile types are walls.
 			for (int i = 0; i < 11; i++)
 			{
 				if (tileType == i) isWall = true;
@@ -46,12 +46,6 @@ public class BlueEnemy extends Enemy
 				return;
 			}
 		}
-	}
-	
-	@Override
-	public void update()
-	{
-		super.update();
 	}
 	
 	@Override

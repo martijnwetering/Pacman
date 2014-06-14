@@ -97,16 +97,16 @@ public class PacmanApplication extends GameEngine implements IAlarm
 	}
 
 	private void addGhosts() {
-		redEnemy = new RedEnemy(pacman, this, 280, 260, 0);
+		redEnemy = new RedEnemy(pacman, this, 280, 260, 0, 4);
 		addGameObject(redEnemy, redEnemy.getXcor(), redEnemy.getYcor(), 20);
 		
-		orangeEnemy = new OrangeEnemy(pacman, this, 300, 260, 5);
+		orangeEnemy = new OrangeEnemy(pacman, this, 300, 260, 5, 4);
 		addGameObject(orangeEnemy, orangeEnemy.getXcor(), orangeEnemy.getYcor(), 20);
 		
-		greenEnemy = new GreenEnemy(pacman, this, 280, 280, 10);
+		greenEnemy = new GreenEnemy(pacman, this, 280, 280, 10, 4);
 		addGameObject(greenEnemy, greenEnemy.getXcor(), greenEnemy.getYcor(), 20);
 		
-		blueEnemy = new BlueEnemy(pacman, this, 300, 280, 12);
+		blueEnemy = new BlueEnemy(pacman, this, 300, 280, 12, 4);
 		addGameObject(blueEnemy, blueEnemy.getXcor(), blueEnemy.getYcor(), 20);
 	}
 	
@@ -131,7 +131,7 @@ public class PacmanApplication extends GameEngine implements IAlarm
 	private void addPacman(int x, int y)
 	{
 		pacman = new Pacman(this, 4, x, y);
-		addGameObject(pacman, pacman.getXCor(), pacman.getYCor());
+		addGameObject(pacman, pacman.getXcor() , pacman.getYcor());
 	}
 	
 	/**

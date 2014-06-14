@@ -1,6 +1,7 @@
 package game.creatures;
 
 import game.PacmanApplication;
+import game.utilities.Position;
 
 import java.util.List;
 
@@ -12,11 +13,16 @@ import android.gameengine.icadroids.objects.collisions.TileCollision;
 
 public class Creature extends MoveableGameObject implements ICollision
 {
-	protected PacmanApplication app;
+	private Position position;
 	
-	public Creature(PacmanApplication app)
+	protected PacmanApplication app; 
+	protected int speed;
+	
+	public Creature(PacmanApplication app, int xCor, int yCor, int speed)
 	{
 		this.app = app;
+		position = new Position(xCor, yCor);
+		this.speed = speed;
 	}
 	
 	public enum Direction
@@ -48,6 +54,16 @@ public class Creature extends MoveableGameObject implements ICollision
 				return;
 			}
 		}
+	}
+	
+	public int getXcor()
+	{
+		return position.getXCor();
+	}
+	
+	public int getYcor()
+	{
+		return position.getYCor();
 	}
 
 }
