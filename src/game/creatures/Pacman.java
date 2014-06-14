@@ -198,11 +198,23 @@ public class Pacman extends Creature implements ICollision, IAlarm
 			if (tc.theTile.getTileType() != 11 && tc.theTile.getTileType() != 12 && tc.theTile.getTileType() != 14
 					&& tc.theTile.getTileType() != 15)
 			{
-				
 				moveUpToTileSide(tc);
-				if (movingUpOrDown && playerAction)
-				{	
-					
+				
+				if(tc.theTile.getTileType() == 16)
+				{
+					setPosition(520,260);
+					setDirectionSpeed(previousDirection, speed);
+				}
+				
+				else if(tc.theTile.getTileType() == 17)
+				{
+					setPosition(20,260);
+					setDirectionSpeed(previousDirection, speed);
+				}
+				
+				
+				else if (movingUpOrDown && playerAction)
+				{						
 					if (collisionSide == 1 || collisionSide == 3)
 					{
 						

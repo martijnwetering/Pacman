@@ -49,46 +49,46 @@ public class PacmanApplication extends GameEngine implements IAlarm
 	private GameTiles gameTiles;
 	private Alarm alarm;
 	private boolean resetting;
-	
+
 	private ArrayList<GameObject> placedGameObjects;
-	
+
 	private PointController pointController;
 	private ArrayList<NormalPoint> normalPoints;
 	private ArrayList<SpecialPoint> specialPoints;
-	
+
 	private int[][] tileMap;
 	private int level;
-	 
+
 	@Override
 	protected void initialize() {
 
 		TouchInput.use = false;
 		MotionSensor.use = false;
 		OnScreenButtons.use = true;
-		
+
 		level = 1;
-		
+
 		createTileEnvironment();
-		
+
 		normalPoints = new ArrayList<NormalPoint>();
 		specialPoints = new ArrayList<SpecialPoint>();
-		
+
 		placedGameObjects = new ArrayList<GameObject>();
-		
+
 		addPacman(100, 260);
 		addGhosts();
 		addPointsAndPowerUps();
-		
-		
+
+
 		scoreDisplay = new DashboardTextView(this);
 		scoreDisplay.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 24);
 		scoreDisplay.setTextColor(Color.BLACK);
 		addToDashboard(scoreDisplay);
-		
+
 		createDashboard(scoreDisplay, 590, 5);
-		
+
 		resetting = false;
-		
+
 	}
 
 	private void addPointsAndPowerUps() {
@@ -102,7 +102,7 @@ public class PacmanApplication extends GameEngine implements IAlarm
 		placedGameObjects.add(new OrangeEnemy(pacman, this, 300, 260, 5, 4, 100));
 		placedGameObjects.add(new GreenEnemy(pacman, this, 280, 280, 10, 4, 100));
 		placedGameObjects.add(new BlueEnemy(pacman, this, 300, 280, 12, 4, 100));
-		
+
 		for (GameObject gameObject : placedGameObjects)
 		{
 			if (gameObject instanceof Enemy)
@@ -112,7 +112,7 @@ public class PacmanApplication extends GameEngine implements IAlarm
 			}
 		}
 	}
-	
+
 	private void createDashboard(final DashboardTextView textView, int xCor, int yCor) 
 	{
 
@@ -130,14 +130,14 @@ public class PacmanApplication extends GameEngine implements IAlarm
 			}
 		});
 	}
-	
+
 	private void addPacman(int x, int y)
 	{
 		pacman = new Pacman(this, 4, x, y, 3);
 		placedGameObjects.add(pacman);
 		addGameObject(pacman, pacman.getXcor() , pacman.getYcor());
 	}
-	
+
 	/**
 	 * Create background with tiles
 	 */
@@ -160,7 +160,7 @@ public class PacmanApplication extends GameEngine implements IAlarm
 	@Override
 	public void update() {
 		super.update();
-		
+
 		int goalDotsEaten = pointController.getNumberOfNormalPoints();
 		int actualDotsEaten = pacman.getDotsEaten();
 		/*if (goalDotsEaten == actualDotsEaten)
@@ -179,12 +179,12 @@ public class PacmanApplication extends GameEngine implements IAlarm
 		{
 			pointController.placeSpecialPoint(2);
 		}
-		
+
 		scoreDisplay.setTextString(
 				"Score: " + String.valueOf(pacman.getScore())
 				+ " | Lives: " + String.valueOf(pacman.getLives()));
 	}
-	
+
 	/**
 	 * Responsible for restarting the game. This happens when pacman lost al
 	 * of his lives. The method removes all game objects still in the game and
@@ -201,7 +201,7 @@ public class PacmanApplication extends GameEngine implements IAlarm
 		addGhosts();
 		addPointsAndPowerUps();
 	}
-	
+
 	/**
 	 * This method stops all movable game objects and sets an alarm. This happens
 	 * when pacman hits one of the ghosts. This is to put a pause between hitting a 
@@ -212,7 +212,7 @@ public class PacmanApplication extends GameEngine implements IAlarm
 		alarm = new Alarm(1, 30, this);
 		alarm.startAlarm();
 	}
-	
+
 	/**
 	 * Responsible for resetting the game field. Al ghosts and pacman are set back
 	 * to there starting positions. The dots eaten and points will stay the same.
@@ -254,7 +254,7 @@ public class PacmanApplication extends GameEngine implements IAlarm
 		addGhosts();
 		addPointsAndPowerUps();
 	}
-	
+
 	public GameTiles getGameTiles()
 	{
 		return gameTiles;
@@ -274,14 +274,15 @@ public class PacmanApplication extends GameEngine implements IAlarm
 	{
 		placedGameObjects.remove(gameObject);
 	}
-	
+
 	public boolean getIsResetting()
 	{
 		return resetting;
 	}
-	
+
 	public void setIsResetting(boolean value)
 	{
 		resetting = value;
 	}
 }
+
