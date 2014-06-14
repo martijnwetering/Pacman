@@ -50,11 +50,14 @@ public class PacmanApplication extends GameEngine implements IAlarm
 	private Alarm alarm;
 	private boolean resetting;
 
+	/**
+	 * Contains all the gameobjects placed on the game field. This is needed
+	 * cause the list with game objects in the GameEngine class gives errors
+	 * when iterating over it to remove game objects.
+	 */
 	private ArrayList<GameObject> placedGameObjects;
 
 	private PointController pointController;
-	private ArrayList<NormalPoint> normalPoints;
-	private ArrayList<SpecialPoint> specialPoints;
 
 	private int[][] tileMap;
 	private int level;
@@ -69,9 +72,6 @@ public class PacmanApplication extends GameEngine implements IAlarm
 		level = 1;
 
 		createTileEnvironment();
-
-		normalPoints = new ArrayList<NormalPoint>();
-		specialPoints = new ArrayList<SpecialPoint>();
 
 		placedGameObjects = new ArrayList<GameObject>();
 
@@ -88,9 +88,11 @@ public class PacmanApplication extends GameEngine implements IAlarm
 		createDashboard(scoreDisplay, 590, 5);
 
 		resetting = false;
-
 	}
 
+	/**
+	 * Places all the points (dots) and power ups on the game field.
+	 */
 	private void addPointsAndPowerUps() {
 		pointController = new PointController(this);
 		pointController.placeNormalPoints();
@@ -113,17 +115,19 @@ public class PacmanApplication extends GameEngine implements IAlarm
 		}
 	}
 
+	/**
+	 * Creates a dashboard to the right of the game field that keeps track
+	 * of pacmans score and lives. 
+	 * @param textView
+	 * @param xCor
+	 * @param yCor
+	 */
 	private void createDashboard(final DashboardTextView textView, int xCor, int yCor) 
 	{
-
-		// this.scoreDisplay.setWidgetWidth(20);
 		textView.setWidgetHeight(60);
 		textView.setWidgetBackgroundColor(Color.WHITE);
 		textView.setWidgetX(xCor);
 		textView.setWidgetY(yCor);
-
-		// If you want to modify the layout of a dashboard widget,
-		// you need to so so using its run method.
 		textView.run(new Runnable() {
 			public void run() {
 				textView.setPadding(10, 10, 10, 10);
@@ -131,6 +135,11 @@ public class PacmanApplication extends GameEngine implements IAlarm
 		});
 	}
 
+	/**
+	 * Responsible for adding pacman to the game.
+	 * @param x: starting x position
+	 * @param y: starting y position
+	 */
 	private void addPacman(int x, int y)
 	{
 		pacman = new Pacman(this, 4, x, y, 3);
@@ -139,7 +148,8 @@ public class PacmanApplication extends GameEngine implements IAlarm
 	}
 
 	/**
-	 * Create background with tiles
+	 * Responsible for creating the correct tile environment. Currently
+	 * there are 2 different tile evironments in the game.
 	 */
 	private void createTileEnvironment() 
 	{
@@ -163,14 +173,17 @@ public class PacmanApplication extends GameEngine implements IAlarm
 
 		int goalDotsEaten = pointController.getNumberOfNormalPoints();
 		int actualDotsEaten = pacman.getDotsEaten();
-		/*if (goalDotsEaten == actualDotsEaten)
-		{
-			endGame();
-		}*/
-		if (15 == actualDotsEaten)
+		if (goalDotsEaten == actualDotsEaten)
 		{
 			nextLevel();
 		}
+		
+		// For testing
+		/*if (15 == actualDotsEaten)
+		{
+			nextLevel();
+		}*/
+		
 		if (actualDotsEaten == 10)
 		{
 			pointController.placeSpecialPoint(1);
@@ -203,9 +216,7 @@ public class PacmanApplication extends GameEngine implements IAlarm
 	}
 
 	/**
-	 * This method stops all movable game objects and sets an alarm. This happens
-	 * when pacman hits one of the ghosts. This is to put a pause between hitting a 
-	 * ghost and resetting the game field. 
+	 * This method set a timer during which the game stands still. 
 	 */
 	public void freezeMap()
 	{	
@@ -214,7 +225,7 @@ public class PacmanApplication extends GameEngine implements IAlarm
 	}
 
 	/**
-	 * Responsible for resetting the game field. Al ghosts and pacman are set back
+	 * Responsible for resetting the game field. All ghosts and pacman are set back
 	 * to there starting positions. The dots eaten and points will stay the same.
 	 */
 	private void resetMap()
@@ -239,6 +250,10 @@ public class PacmanApplication extends GameEngine implements IAlarm
 		this.deleteAlarm(alarm);
 	}
 	
+	/**
+	 * Responsible for removing all game objects and setting up the
+	 * next level.
+	 */
 	public void nextLevel()
 	{
 		level++;

@@ -53,8 +53,6 @@ public class PointController implements IAlarm
 					int yCor = tile.getTileY();
 					int tileType = tile.getTileType();
 					
-					Log.d("tileType", Integer.toString(tileType));				
-				
 					if (tileType == 11 || tileType == 14)
 					{
 						numberOfNormalPoints++;

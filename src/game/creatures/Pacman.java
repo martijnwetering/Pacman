@@ -186,8 +186,6 @@ public class Pacman extends Creature implements ICollision, IAlarm
 	@Override
 	public void collisionOccurred(List<TileCollision> collidedTiles) 
 	{
-		super.collisionOccurred(collidedTiles);
-		
 		for (TileCollision tc : collidedTiles)
 		{
 			int collisionSide = tc.collisionSide;
@@ -239,6 +237,11 @@ public class Pacman extends Creature implements ICollision, IAlarm
 		playerAction = false;
 	}
 	
+	/**
+	 * When pacman eats a power up, an alarm is set and his hunter status
+	 * is set to true. When the alarm expires his hunter status is set
+	 * back to false.
+	 */
 	private void activateHunterMode()
 	{
 		alarm.restartAlarm();

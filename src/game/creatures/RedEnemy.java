@@ -6,9 +6,10 @@ import game.creatures.Creature.Direction;
 import java.util.List;
 import java.util.Random;
 
+import android.gameengine.icadroids.objects.collisions.ICollision;
 import android.gameengine.icadroids.objects.collisions.TileCollision;
 
-public class RedEnemy extends Enemy 
+public class RedEnemy extends Enemy implements ICollision
 {
 
 	public RedEnemy(Pacman pacman, PacmanApplication app, int xCor, int yCor, 

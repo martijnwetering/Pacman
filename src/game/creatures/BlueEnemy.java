@@ -6,9 +6,10 @@ import game.creatures.Creature.Direction;
 import java.util.List;
 import java.util.Random;
 
+import android.gameengine.icadroids.objects.collisions.ICollision;
 import android.gameengine.icadroids.objects.collisions.TileCollision;
 
-public class BlueEnemy extends Enemy 
+public class BlueEnemy extends Enemy implements ICollision
 {
 	private boolean collided;
 	private boolean isWall;

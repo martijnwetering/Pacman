@@ -5,9 +5,10 @@ import game.PacmanApplication;
 import java.util.List;
 import java.util.Random;
 
+import android.gameengine.icadroids.objects.collisions.ICollision;
 import android.gameengine.icadroids.objects.collisions.TileCollision;
 
-public class OrangeEnemy extends Enemy 
+public class OrangeEnemy extends Enemy implements ICollision
 {
 
 	public OrangeEnemy(Pacman pacman, PacmanApplication app, int xCor, int yCor, 

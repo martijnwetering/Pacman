@@ -22,8 +22,6 @@ public abstract class Enemy extends Creature implements IPoint
 	protected Random randomNumberGenerator = new Random();
 	protected int currentDirection;
 	
-	
-
 	public Enemy(Pacman pacman, PacmanApplication app, int xCor, int yCor, 
 			int numberOfDotsToActivate, int speed, int points) 
 	{
@@ -120,6 +118,10 @@ public abstract class Enemy extends Creature implements IPoint
 		return directions[randomDirection];
 	}
 	
+	/**
+	 * Only returns points for pacman if pacmans hunter status
+	 * is true.
+	 */
 	public int getPoints()
 	{
 		if (pacman.isHunter()) 
