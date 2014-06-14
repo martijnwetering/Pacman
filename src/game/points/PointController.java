@@ -58,7 +58,7 @@ public class PointController implements IAlarm
 					if (tileType == 11 || tileType == 14)
 					{
 						numberOfNormalPoints++;
-						NormalPoint normalPoint = new NormalPoint(app);
+						NormalPoint normalPoint = new NormalPoint(10);
 						app.setOnNormalPointList(normalPoint);
 						app.addGameObject(normalPoint, xCor, yCor);
 					}
@@ -77,7 +77,7 @@ public class PointController implements IAlarm
 		if (kindOfSpecialPoint == SPECIALPOINTONE && firstSpecialPointPlaced == 0 
 				|| kindOfSpecialPoint == SPECIALPOINTTWO && secondSpecialPointPlaced == 0)
 		{
-			SpecialPoint specialPoint = new SpecialPoint(app);
+			SpecialPoint specialPoint = new SpecialPoint(25);
 			
 			Random randomNumberGenerator = new Random();
 			int randomNumber = randomNumberGenerator.nextInt(9);
@@ -122,7 +122,7 @@ public class PointController implements IAlarm
 					
 					if (tileType == 15)
 					{
-						PowerUp powerUp = new PowerUp(app);
+						PowerUp powerUp = new PowerUp(15);
 						app.addGameObject(powerUp, xCor, yCor);				
 					}
 				}

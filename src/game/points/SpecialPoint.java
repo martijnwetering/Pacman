@@ -1,19 +1,26 @@
 package game.points;
 
+import android.gameengine.icadroids.objects.GameObject;
 import game.PacmanApplication;
 
-public class SpecialPoint extends BasePoint 
+public class SpecialPoint extends GameObject implements IPoint
 {
+	private int points;
 	private int maxAge;
 
-	public SpecialPoint(PacmanApplication app) 
+	public SpecialPoint(int points) 
 	{
-		super(app, 25);
+		this.points = points;
 		setSprite("special_point");
-		maxAge = 210;
+		maxAge = 250;
 	}
 	
-	public int getMaxAge()
+	@Override
+	public int getPoints() {
+		return points;
+	}
+	
+	public int getMaxAge() 
 	{
 		return maxAge;
 	}

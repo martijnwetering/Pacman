@@ -10,9 +10,10 @@ import android.gameengine.icadroids.objects.collisions.TileCollision;
 public class GreenEnemy extends Enemy 
 {
 
-	public GreenEnemy(Pacman pacman, PacmanApplication app, int xCor, int yCor, int numberOfDotsToActivate, int speed) 
+	public GreenEnemy(Pacman pacman, PacmanApplication app, int xCor, int yCor, 
+			int numberOfDotsToActivate, int speed, int points) 
 	{
-		super(pacman, app, xCor, yCor, numberOfDotsToActivate, speed);
+		super(pacman, app, xCor, yCor, numberOfDotsToActivate, speed, points);
 		setSprite("green_strip3", 3);
 		setFrameNumber(0);
 	}

@@ -47,9 +47,10 @@ public class PacmanApplication extends GameEngine implements IAlarm
 	private Pacman pacman;
 	private DashboardTextView scoreDisplay;
 	private GameTiles gameTiles;
-	private Enemy redEnemy, orangeEnemy, greenEnemy, blueEnemy;
 	private Alarm alarm;
 	private boolean resetting;
+	
+	private ArrayList<GameObject> placedGameObjects;
 	
 	private PointController pointController;
 	private ArrayList<NormalPoint> normalPoints;
@@ -58,8 +59,6 @@ public class PacmanApplication extends GameEngine implements IAlarm
 	private int[][] tileMap;
 	private int level;
 	 
-
-
 	@Override
 	protected void initialize() {
 
@@ -73,6 +72,8 @@ public class PacmanApplication extends GameEngine implements IAlarm
 		
 		normalPoints = new ArrayList<NormalPoint>();
 		specialPoints = new ArrayList<SpecialPoint>();
+		
+		placedGameObjects = new ArrayList<GameObject>();
 		
 		addPacman(100, 260);
 		addGhosts();
@@ -97,17 +98,19 @@ public class PacmanApplication extends GameEngine implements IAlarm
 	}
 
 	private void addGhosts() {
-		redEnemy = new RedEnemy(pacman, this, 280, 260, 0, 4);
-		addGameObject(redEnemy, redEnemy.getXcor(), redEnemy.getYcor(), 20);
+		//placedGameObjects.add(new RedEnemy(pacman, this, 280, 260, 0, 4, 100));
+		//placedGameObjects.add(new OrangeEnemy(pacman, this, 300, 260, 5, 4, 100));
+		//placedGameObjects.add(new GreenEnemy(pacman, this, 280, 280, 10, 4, 100));
+		placedGameObjects.add(new BlueEnemy(pacman, this, 300, 280, 12, 4, 100));
 		
-		orangeEnemy = new OrangeEnemy(pacman, this, 300, 260, 5, 4);
-		addGameObject(orangeEnemy, orangeEnemy.getXcor(), orangeEnemy.getYcor(), 20);
-		
-		greenEnemy = new GreenEnemy(pacman, this, 280, 280, 10, 4);
-		addGameObject(greenEnemy, greenEnemy.getXcor(), greenEnemy.getYcor(), 20);
-		
-		blueEnemy = new BlueEnemy(pacman, this, 300, 280, 12, 4);
-		addGameObject(blueEnemy, blueEnemy.getXcor(), blueEnemy.getYcor(), 20);
+		for (GameObject gameObject : placedGameObjects)
+		{
+			if (gameObject instanceof Enemy)
+			{
+				Enemy enemy = (Enemy)gameObject;
+				addGameObject(enemy, enemy.getXcor(), enemy.getYcor(), 20);
+			}
+		}
 	}
 	
 	private void createDashboard(final DashboardTextView textView, int xCor, int yCor) 
@@ -130,7 +133,8 @@ public class PacmanApplication extends GameEngine implements IAlarm
 	
 	private void addPacman(int x, int y)
 	{
-		pacman = new Pacman(this, 4, x, y);
+		pacman = new Pacman(this, 4, x, y, 3);
+		placedGameObjects.add(pacman);
 		addGameObject(pacman, pacman.getXcor() , pacman.getYcor());
 	}
 	
@@ -196,13 +200,20 @@ public class PacmanApplication extends GameEngine implements IAlarm
 				deleteGameObject(gameObject);
 			}
 		}
-		deleteGameObject(pacman);
-		items.remove(pacman);
-		this.pacman = null;
-		deleteGameObject(redEnemy);
-		deleteGameObject(blueEnemy);
-		deleteGameObject(greenEnemy);
-		deleteGameObject(orangeEnemy);
+//		deleteGameObject(pacman);
+//		items.remove(pacman);
+//		this.pacman = null;
+		
+		for (GameObject gameObject : placedGameObjects)
+		{
+			items.remove(gameObject);
+			deleteGameObject(gameObject);
+		}
+		
+//		deleteGameObject(redEnemy);
+//		deleteGameObject(blueEnemy);
+//		deleteGameObject(greenEnemy);
+//		deleteGameObject(orangeEnemy);
 		
 		addPacman(100, 260);
 		addGhosts();
@@ -220,10 +231,10 @@ public class PacmanApplication extends GameEngine implements IAlarm
 	public void freezeMap()
 	{	
 		pacman.setSpeed(0);
-		redEnemy.setSpeed(0);
-		greenEnemy.setSpeed(0);
-		blueEnemy.setSpeed(0);
-		orangeEnemy.setSpeed(0);
+//		redEnemy.setSpeed(0);
+//		greenEnemy.setSpeed(0);
+//		blueEnemy.setSpeed(0);
+//		orangeEnemy.setSpeed(0);
 		
 		alarm = new Alarm(1, 30, this);
 		alarm.startAlarm();
@@ -237,14 +248,25 @@ public class PacmanApplication extends GameEngine implements IAlarm
 	{
 		pacman.jumpToStartPosition();
 		pacman.setDirection(Direction.RIGHT.getValue());
-		redEnemy.jumpToStartPosition();
-		redEnemy.setDirection(Direction.UP.getValue());
-		greenEnemy.jumpToStartPosition();
-		greenEnemy.setDirection(Direction.UP.getValue());
-		blueEnemy.jumpToStartPosition();
-		blueEnemy.setDirection(Direction.UP.getValue());
-		orangeEnemy.jumpToStartPosition();
-		orangeEnemy.setDirection(Direction.UP.getValue());
+		
+		for (GameObject gameObject : placedGameObjects )
+		{
+			gameObject.jumpToStartPosition();
+			
+			if (gameObject instanceof Enemy) 
+			{	
+				((Enemy)gameObject).setDirection(Direction.UP.getValue());
+			}
+		}
+		
+//		redEnemy.jumpToStartPosition();
+//		redEnemy.setDirection(Direction.UP.getValue());
+//		greenEnemy.jumpToStartPosition();
+//		greenEnemy.setDirection(Direction.UP.getValue());
+//		blueEnemy.jumpToStartPosition();
+//		blueEnemy.setDirection(Direction.UP.getValue());
+//		orangeEnemy.jumpToStartPosition();
+//		orangeEnemy.setDirection(Direction.UP.getValue());
 		
 		resetting = false;
 		
@@ -268,6 +290,11 @@ public class PacmanApplication extends GameEngine implements IAlarm
 	
 	public void setOnSpecialpointlist(SpecialPoint point) {
 		specialPoints.add(point);
+	}
+	
+	public void setOnPlacedGameObjects(GameObject gameObject)
+	{
+		placedGameObjects.add(gameObject);
 	}
 	
 	public boolean getIsResetting()
