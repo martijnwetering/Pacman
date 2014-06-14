@@ -59,7 +59,7 @@ public class PointController implements IAlarm
 					{
 						numberOfNormalPoints++;
 						NormalPoint normalPoint = new NormalPoint(10);
-						app.setOnNormalPointList(normalPoint);
+						app.setOnPlacedGameObjects(normalPoint);
 						app.addGameObject(normalPoint, xCor, yCor);
 					}
 				}
@@ -87,7 +87,7 @@ public class PointController implements IAlarm
 			int yCor = point.getYCor();
 			
 			app.addGameObject(specialPoint, xCor, yCor);
-			app.setOnSpecialpointlist(specialPoint);
+			app.setOnPlacedGameObjects(specialPoint);
 			
 			if (alarm == null)
 			{
@@ -123,6 +123,7 @@ public class PointController implements IAlarm
 					if (tileType == 15)
 					{
 						PowerUp powerUp = new PowerUp(15);
+						app.setOnPlacedGameObjects(powerUp);
 						app.addGameObject(powerUp, xCor, yCor);				
 					}
 				}

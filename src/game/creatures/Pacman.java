@@ -28,8 +28,9 @@ public class Pacman extends Creature implements ICollision, IAlarm
 {
 	private int currentDirection, previousDirection, score, dotsEaten, dotsEatenOnTurn, lives;
 	private boolean playerAction;
-	private Alarm myAlarm;
+	private Alarm alarm;
 	private boolean hunter;
+	private boolean pacmanActive;
 
 	public Pacman(PacmanApplication app, int speed, int xCor, int yCor, int lives) 
 	{
@@ -37,7 +38,7 @@ public class Pacman extends Creature implements ICollision, IAlarm
 		
 		this.app = app;
 		this.lives = lives;
-		myAlarm = new Alarm(2, 300, this);
+		alarm = new Alarm(2, 210, this);
 		
 		setSprite("pacman_right_strip4", 4);
 		setDirection(90);
@@ -47,6 +48,7 @@ public class Pacman extends Creature implements ICollision, IAlarm
 		playerAction = false;
 		hunter = false;
 		dotsEatenOnTurn = 0;
+		pacmanActive = true;
 	}
 
 	@Override
@@ -84,6 +86,8 @@ public class Pacman extends Creature implements ICollision, IAlarm
 					if (!hunter && lives > 0 && !app.getIsResetting())
 					{
 						app.setIsResetting(true);
+						setSpeed(0);
+						pacmanActive = false;
 						lives--;
 						dotsEatenOnTurn = 0;
 						app.freezeMap();
@@ -105,43 +109,47 @@ public class Pacman extends Creature implements ICollision, IAlarm
 	private void setMovement() 
 	{
 		boolean buttonPressed = false;
-		if (OnScreenButtons.dPadUp || OnScreenButtons.dPadDown
-				|| OnScreenButtons.dPadLeft || OnScreenButtons.dPadRight)
+		if (pacmanActive)
 		{
-			buttonPressed = true;
-		}
-
-		if (OnScreenButtons.dPadUp || (MotionSensor.tiltUp && !buttonPressed))
-		{
-			previousDirection = currentDirection;
-			playerAction = true;
-			currentDirection = Direction.UP.getValue();
-			setDirectionSpeed(currentDirection, speed);
-		}
-		if (OnScreenButtons.dPadDown
-				|| (MotionSensor.tiltDown && !buttonPressed))
-		{
-			previousDirection = currentDirection;
-			playerAction = true;
-			currentDirection = Direction.DOWN.getValue();
-			setDirectionSpeed(currentDirection, speed);
-		}
-		if (OnScreenButtons.dPadRight
-				|| (MotionSensor.tiltRight && !buttonPressed))
-		{
-			previousDirection = currentDirection;	
-			playerAction = true;
-			currentDirection = Direction.RIGHT.getValue();
-			setDirectionSpeed(currentDirection, speed);						
-			
-		}
-		if (OnScreenButtons.dPadLeft
-				|| (MotionSensor.tiltLeft && !buttonPressed))
-		{
-			previousDirection = currentDirection;
-			playerAction = true;
-			currentDirection = Direction.LEFT.getValue();
-			setDirectionSpeed(currentDirection, speed);
+			if (OnScreenButtons.dPadUp || OnScreenButtons.dPadDown
+					|| OnScreenButtons.dPadLeft || OnScreenButtons.dPadRight)
+			{
+				buttonPressed = true;
+			}
+	
+			if (OnScreenButtons.dPadUp 
+					|| (MotionSensor.tiltUp && !buttonPressed))
+			{
+				previousDirection = currentDirection;
+				playerAction = true;
+				currentDirection = Direction.UP.getValue();
+				setDirectionSpeed(currentDirection, speed);
+			}
+			if (OnScreenButtons.dPadDown
+					|| (MotionSensor.tiltDown && !buttonPressed))
+			{
+				previousDirection = currentDirection;
+				playerAction = true;
+				currentDirection = Direction.DOWN.getValue();
+				setDirectionSpeed(currentDirection, speed);
+			}
+			if (OnScreenButtons.dPadRight
+					|| (MotionSensor.tiltRight && !buttonPressed))
+			{
+				previousDirection = currentDirection;	
+				playerAction = true;
+				currentDirection = Direction.RIGHT.getValue();
+				setDirectionSpeed(currentDirection, speed);						
+				
+			}
+			if (OnScreenButtons.dPadLeft
+					|| (MotionSensor.tiltLeft && !buttonPressed))
+			{
+				previousDirection = currentDirection;
+				playerAction = true;
+				currentDirection = Direction.LEFT.getValue();
+				setDirectionSpeed(currentDirection, speed);
+			}
 		}
 	}
 	
@@ -187,7 +195,7 @@ public class Pacman extends Creature implements ICollision, IAlarm
 			boolean movingRightOrLeft = previousDirection == 90 || previousDirection == 270;
 			
 			// If pacman hits a wall 
-			if (tc.theTile.getTileType() != 11 && tc.theTile.getTileType() != 14
+			if (tc.theTile.getTileType() != 11 && tc.theTile.getTileType() != 12 && tc.theTile.getTileType() != 14
 					&& tc.theTile.getTileType() != 15)
 			{
 				
@@ -221,14 +229,14 @@ public class Pacman extends Creature implements ICollision, IAlarm
 	
 	private void activateHunterMode()
 	{
-		myAlarm.restartAlarm();
+		alarm.restartAlarm();
 		hunter = true;
 	}
 	
 	public void triggerAlarm(int id) 
 	{ 
 		hunter = false;
-		myAlarm.pauseAlarm();
+		alarm.pauseAlarm();
 	}
 	
 	public int getScore()
@@ -251,6 +259,11 @@ public class Pacman extends Creature implements ICollision, IAlarm
 	
 	public int getDotsEatenOnTurn() {
 		return dotsEatenOnTurn;
+	}
+	
+	public void setPacmanActive(boolean pacmanActive)
+	{
+		this.pacmanActive = pacmanActive;
 	}
 	
 }
