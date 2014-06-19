@@ -20,6 +20,10 @@ public class RedEnemy extends Enemy implements ICollision
 		setFrameNumber(0);
 	}
 
+	/**
+	 * This ghost always go's right, but if it hits a wall two times in
+	 * a row it will choose a random direction.
+	 */
 	@Override
 	public void move(List<TileCollision> collidedTiles) 
 	{

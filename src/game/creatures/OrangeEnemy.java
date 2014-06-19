@@ -19,6 +19,9 @@ public class OrangeEnemy extends Enemy implements ICollision
 		setFrameNumber(0);
 	}
 
+	/**
+	 * This ghost always go's a random direction when it hits a wall.
+	 */
 	@Override
 	public void move(List<TileCollision> collidedTiles) 
 	{

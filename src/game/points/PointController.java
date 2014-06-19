@@ -163,6 +163,9 @@ public class PointController implements IAlarm
 		return false;
 	}
 	
+	/**
+	 * Sets all the available cords for a special point in an Arraylist.
+	 */
 	private void initializeSpecialPointsCords()
 	{
 		int xCor = 200;
@@ -183,12 +186,18 @@ public class PointController implements IAlarm
 		
 	}
 	
+	/**
+	 * Deletes all special points from the game.
+	 */
 	private void removeSpecialPoint() {
 		app.deleteAllGameObjectsOfType(SpecialPoint.class);
 	}
 
-	// Return the number of normal points the player needs to acquire 
-	// to win.
+	/**
+	 * Return the number of normal points the player needs to acquire 
+	 * to win.
+	 * @return number of points to eat in order to win the level.
+	 */
 	public int getNumberOfNormalPoints()
 	{
 		return numberOfNormalPoints;

@@ -19,6 +19,10 @@ public class GreenEnemy extends Enemy implements ICollision
 		setFrameNumber(0);
 	}
 
+	/**
+	 * This ghost always moves a random direction, also on intersections
+	 * where it does not hit a wall.
+	 */
 	@Override
 	public void move(List<TileCollision> collidedTiles) 
 	{

@@ -36,7 +36,19 @@ public abstract class Enemy extends Creature implements IPoint
 		
 	}
 	
+	/**
+	 * This method is responsible for the movement of the ghost. All
+	 * ghost have different behaviour for this, so they all implement
+	 * there own version.
+	 * @param collidedTiles
+	 */
 	public abstract void move(List<TileCollision> collidedTiles);
+	
+	/**
+	 * This method gets called when pacmans power up fades. Since
+	 * they all have different sprites they need to implements there
+	 * own versions of this method.
+	 */
 	public abstract void setDefaultSprite();
 	
 	@Override
@@ -56,6 +68,10 @@ public abstract class Enemy extends Creature implements IPoint
 		}
 	}
 	
+	/**
+	 * If a ghost is not active yet and pacman eats the number of dots set
+	 * for the particular ghost, this method will activate the ghost.
+	 */
 	public void activate()
 	{
 		if (pacman.getDotsEatenOnTurn() == numberOfDotsToActivate && !active)

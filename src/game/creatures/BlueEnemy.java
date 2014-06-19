@@ -28,10 +28,14 @@ public class BlueEnemy extends Enemy implements ICollision
 		setFrameNumber(0);
 	}
 
+	/**
+	 * This ghost always go's a random direction when it hits a wall.
+	 * Als when pacman gets within a 60px radius it will reverse it's
+	 * direction.
+	 */
 	@Override
 	public void move(List<TileCollision> collidedTiles) 
 	{			  
-
 		for (TileCollision tc : collidedTiles)
 		{
 
@@ -158,6 +162,10 @@ public class BlueEnemy extends Enemy implements ICollision
 		setSprite("blue_strip3", 3);
 	}
 
+	/**
+	 * Calculates if pacman is within a 60px radius.
+	 * @return true if pacman is within 60px;
+	 */
 	public boolean isPacmanToClose(){
 
 		posXPacman = pacman.getX();

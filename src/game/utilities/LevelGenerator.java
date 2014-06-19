@@ -9,11 +9,20 @@ public class LevelGenerator
 				"cornerbottomright", "vertical", "horizontal", "internleft", 
 				"internright", "interntop", "internbottom", "wall_tile", 
 				"background_tile", "no_gameobject", "gate", "invisible_wall",
-				"power_up_tile", "invisible_wall", "invisible_wall"};
+				"power_up_tile", "invisible_wall", "invisible_wall", "menu"};
     
 		return tileImagesNames;
 	}
 	
+	public static int[][] createMenu() 
+	{	
+		int[][]tilemap = 
+		{
+				{18,11},
+				{13,13},
+		};
+		return tilemap;
+	}
 	
 	public static int[][] createLevel1() 
 	{	

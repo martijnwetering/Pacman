@@ -154,6 +154,7 @@ public class PacmanApplication extends GameEngine implements IAlarm
 	private void createTileEnvironment() 
 	{
 		String[] tileImagesNames = LevelGenerator.createImagesNames();
+		if(level == 0){tileMap = LevelGenerator.createMenu();}
 		if(level == 1){tileMap = LevelGenerator.createLevel1();}
 		if(level == 2){tileMap = LevelGenerator.createLevel2();}	
 		gameTiles = new GameTiles(tileImagesNames, tileMap, 20);
@@ -178,7 +179,7 @@ public class PacmanApplication extends GameEngine implements IAlarm
 			nextLevel();
 		}
 		
-		// For testing
+		// For testing next level
 		/*if (15 == actualDotsEaten)
 		{
 			nextLevel();

@@ -25,6 +25,9 @@ public abstract class Creature extends MoveableGameObject
 		this.speed = speed;
 	}
 	
+	/**
+	 * Can be used to set the direction of a movable game object.
+	 */
 	public enum Direction
 	{
 		UP(0), RIGHT(90), DOWN(180), LEFT(270);
